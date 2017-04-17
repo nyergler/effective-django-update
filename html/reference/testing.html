@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Testing in Django &#8212; Effective Django</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0-pre',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Understanding Middleware" href="middleware.html" />
+    <link rel="prev" title="Introduction" href="intro.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="testing-in-django">
+<h1>Testing in Django<a class="headerlink" href="#testing-in-django" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="testing-django">
+<h2>Testing Django<a class="headerlink" href="#testing-django" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>There are Unit Tests and there are Integration tests</li>
+<li>Unit Tests should not rely on external services</li>
+<li>Unit Tests should be <em>fast</em></li>
+</ul>
+</div>
+<div class="section" id="writing-a-unit-test">
+<h2>Writing a Unit Test<a class="headerlink" href="#writing-a-unit-test" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Django bundles <code class="docutils literal"><span class="pre">unittest2</span></code> as <code class="docutils literal"><span class="pre">django.utils.unittest</span></code></li>
+</ul>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">django.http</span>
+<span class="kn">import</span> <span class="nn">django.utils.unittest</span> <span class="k">as</span> <span class="nn">unittest2</span>
+
+<span class="k">class</span> <span class="nc">LocaleMiddlewareTests</span><span class="p">(</span><span class="n">unittest2</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">test_request_not_processed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">middleware</span> <span class="o">=</span> <span class="n">LocaleMiddle</span><span class="p">()</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">django</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">HttpResponse</span><span class="p">()</span>
+        <span class="n">middleware</span><span class="o">.</span><span class="n">process_response</span><span class="p">(</span><span class="n">none</span><span class="p">,</span> <span class="n">response</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">cookies</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="test-client">
+<h2>Test Client<a class="headerlink" href="#test-client" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Django TestClient acts like a browser. Sort of.</li>
+<li>Allows you to make a request against your application and inspect
+the response</li>
+<li>The TestClient is <em>slow</em> (compared to plain unit tests)</li>
+</ul>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.test.client</span> <span class="k">import</span> <span class="n">Client</span>
+
+<span class="n">c</span> <span class="o">=</span> <span class="n">Client</span><span class="p">()</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;/login&#39;</span><span class="p">)</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">post</span><span class="p">(</span><span class="s1">&#39;/login/&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;username&#39;</span><span class="p">:</span> <span class="s1">&#39;john&#39;</span><span class="p">,</span> <span class="s1">&#39;password&#39;</span><span class="p">:</span> <span class="s1">&#39;smith&#39;</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="request-factory">
+<h2>Request Factory<a class="headerlink" href="#request-factory" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Django 1.3 introduced <code class="docutils literal"><span class="pre">RequestFactory</span></code>, with an API similar to
+Test Client</li>
+<li>Easy way to generate <code class="docutils literal"><span class="pre">Request</span></code> objects, which can be passed to
+views</li>
+<li>Note that middleware is <strong>not</strong> run on these Requests</li>
+</ul>
+</div>
+<div class="section" id="running-tests">
+<h2>Running Tests<a class="headerlink" href="#running-tests" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Django only looks in apps with <code class="docutils literal"><span class="pre">models.py</span></code> for tests</li>
+</ul>
+<div class="highlight-default"><div class="highlight"><pre><span></span>$ ./manage.py test
+</pre></div>
+</div>
+<ul class="simple">
+<li>Easy to replace the test runner with something like <code class="docutils literal"><span class="pre">nose</span></code> if you
+so desire</li>
+</ul>
+</div>
+<div class="section" id="further-reading">
+<h2>Further Reading<a class="headerlink" href="#further-reading" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="https://docs.djangoproject.com/en/1.4/topics/testing/">Django Testing Documentation</a></li>
+<li><a class="reference external" href="http://www.packtpub.com/django-1-1-testing-and-debugging/book">Django 1.1 Testing &amp; Debugging</a></li>
+</ul>
+</div>
+</div>
+
+
+
+            
+              
+              <div class="page_footer">
+              <h4>Next</h4>
+                <a href="middleware.html">Understanding Middleware</a>
+              </div>
+              
+            
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Effective Django</a></h1>
+
+
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../01_intro/index.html">Getting Started with Django</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_production/index.html">Building for Production</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_advanced/index.html">Advanced Django</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgments.html">Acknowledgments</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Effective Django (legacy)</a><ul>
+      <li>Previous: <a href="intro.html" title="previous chapter">Introduction</a></li>
+      <li>Next: <a href="middleware.html" title="next chapter">Understanding Middleware</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<h3>Donate</h3>
+<p>
+Consider supporting the authors on <a href="https://www.gratipay.com/">Gratipay</a>:
+<script data-gratipay-username="nyergler"
+        data-gratipay-widget="button"
+        src="//gttp.co/v1.js"></script>
+</p>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+  </div>
+
+
+    <div class="footer">
+      &copy;2012-2017, Nathan R. Yergler.
+      
+      |
+      <a href="../_sources/reference/testing.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

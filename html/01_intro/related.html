@@ -1,0 +1,227 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Related Models &#8212; Effective Django</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0-pre',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Building for Production" href="../02_production/index.html" />
+    <link rel="prev" title="Form Basics" href="forms.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="related-models">
+<h1>Related Models<a class="headerlink" href="#related-models" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="adding-relationships">
+<h2>Adding Relationships<a class="headerlink" href="#adding-relationships" title="Permalink to this headline">¶</a></h2>
+<p>We have a basic email address book at this point, but there&#8217;s other
+information we might want to track for our contacts. Mailing
+addresses, for example. A single Contact may have multiple addresses
+associated with them, so we&#8217;ll store this in a separate table,
+allowing us to have multiple addresses for each Contact.</p>
+<p>Django provides three types of fields for relating objects to each
+other: <code class="docutils literal"><span class="pre">ForeignKey</span></code> for creating one to many relationships,
+<code class="docutils literal"><span class="pre">ManyToManyField</span></code> for relating many to many, and <code class="docutils literal"><span class="pre">OneToOneField</span></code>
+for creating a one to one relationship. You define the relationship in
+one model, but it&#8217;s accessible from the other side, as well.</p>
+<p>Sync up the database to create the table, and then start the shell so
+we can explore this.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>(tutorial)$ python manage.py syncdb
+Creating tables ...
+Creating table contacts_address
+Installing custom SQL ...
+Installing indexes ...
+Installed 0 object(s) from 0 fixture(s)
+</pre></div>
+</div>
+<p>Now that we have the model created, we can again play with it using
+the interactive shell.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>(tutorial)$ python manage.py shell
+Python 2.7.3 (default, Aug  9 2012, 17:23:57)
+[GCC 4.7.1 20120720 (Red Hat 4.7.1-5)] on linux2
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+(InteractiveConsole)
+&gt;&gt;&gt; from contacts.models import Contact, Address
+&gt;&gt;&gt; nathan = Contact.objects.create(first_name=&#39;Nathan&#39;, email=&#39;nathan@yergler.net&#39;)
+&gt;&gt;&gt; nathan.address_set.all()
+[]
+&gt;&gt;&gt; nathan.address_set.create(address_type=&#39;home&#39;,
+... city=&#39;San Francisco&#39;, state=&#39;CA&#39;, postal_code=&#39;94107&#39;)
+&lt;Address: Address object&gt;
+&gt;&gt;&gt; nathan.address_set.create(address_type=&#39;college&#39;,
+... address=&#39;354 S. Grant St.&#39;, city=&#39;West Lafayette&#39;, state=&#39;IN&#39;,
+... postal_code=&#39;47906&#39;)
+&lt;Address: Address object&gt;
+&gt;&gt;&gt; nathan.address_set.all()
+[&lt;Address: Address object&gt;, &lt;Address: Address object&gt;]
+&gt;&gt;&gt; nathan.address_set.filter(address_type=&#39;college&#39;)
+&lt;Address: Address object&gt;
+&gt;&gt;&gt; Address.objects.filter(contact__first_name=&#39;Nathan&#39;)
+[&lt;Address: Address object&gt;, &lt;Address: Address object&gt;]
+</pre></div>
+</div>
+<p>As you can see, even though we defined the relationship between
+Contacts and Addresses on the Address model, Django gives us a way to
+access things in the reverse direction. We can also use the double
+underscore notation to filter Addresses or Contacts based on the
+related objects.</p>
+<p>Let&#8217;s go ahead and add address display to our contacts. We&#8217;ll add the
+list of all Addresses to the Contact detail view in <code class="docutils literal"><span class="pre">contact.html</span></code>.</p>
+</div>
+<div class="section" id="editing-related-objects">
+<h2>Editing Related Objects<a class="headerlink" href="#editing-related-objects" title="Permalink to this headline">¶</a></h2>
+<p>So how do we go about editing addresses for our contacts? You can
+imagine creating another CreateView like we did for Contacts, but the
+question remains: how do we wire the new Address to our Contact? We
+could conceivably just pass the Contact&#8217;s ID through the the HTML, but
+we&#8217;d still need to validate that it hadn&#8217;t been tampered with when we
+go to create the Address.</p>
+<p>To deal with this, we&#8217;ll create a form that understands the
+relationship between Contacts and Addresses.</p>
+<p>The editing interface we&#8217;re going to build for Addresses is one that
+allows you to edit all the addresses for a Contact at once. To do
+this, we&#8217;ll need to create a <a class="reference external" href="https://docs.djangoproject.com/en/1.5/topics/forms/formsets/">FormSet</a> that handles all the Addresses
+for a single Contact. A FormSet is an object that manages multiple
+copies of the same Form (or ModelForm) in a single page. The <a class="reference external" href="https://docs.djangoproject.com/en/1.5/topics/forms/modelforms/#inline-formsets">Inline
+FormSet</a> does this for a set of objects (in this case Addresses) that
+share a common related object (in this case the Contact).</p>
+<p>Because formsets are somewhat complex objects, Django provides factory
+functions that create the class for you. We&#8217;ll add a call to the
+factory to our <code class="docutils literal"><span class="pre">forms.py</span></code> file.</p>
+<p>When we create the view, we&#8217;ll need to specify that this is the form
+we want to use, instead of having Django create one for us.</p>
+<p>Note that even though we&#8217;re editing Addresses with this view, we still
+have <code class="docutils literal"><span class="pre">model</span></code> set to <code class="docutils literal"><span class="pre">Contact</span></code>. This is because an inline formset
+takes the parent object as its starting point.</p>
+<p>Once again, this needs to be wired up into the URL configuration.</p>
+<p>And we have a simple template.</p>
+<p>There are two new things in this template, both related to the fact
+we&#8217;re using a formset instead of a form. First, there&#8217;s a reference to
+<code class="docutils literal"><span class="pre">form.management_form</span></code>. This is a set of hidden fields that provide
+some accounting information to Django: how many forms did we start
+with, how many empty ones are there, etc. If Django can&#8217;t find this
+information when you POST the form, it will raise an exception.</p>
+<p>Second, we&#8217;re iterating over form instead of just outputting it (<code class="docutils literal"><span class="pre">for</span>
+<span class="pre">address_form</span> <span class="pre">in</span> <span class="pre">form</span></code>). Again, this is because <code class="docutils literal"><span class="pre">form</span></code> here is a
+formset instead of a single form. When you iterate over a formset,
+you&#8217;re iterating over the individual forms in it. These individual
+forms are just &#8220;normal&#8221; <code class="docutils literal"><span class="pre">ModelForm</span></code> instances for each Address, so
+you can apply the same output techniques you would normally use.</p>
+</div>
+</div>
+
+
+
+            
+              
+              <div class="page_footer">
+              <h4>Next</h4>
+                <a href="../02_production/index.html">Building for Production</a>
+              </div>
+              
+            
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Effective Django</a></h1>
+
+
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Getting Started with Django</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_production/index.html">Building for Production</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_advanced/index.html">Advanced Django</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgments.html">Acknowledgments</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Getting Started with Django</a><ul>
+      <li>Previous: <a href="forms.html" title="previous chapter">Form Basics</a></li>
+      <li>Next: <a href="../02_production/index.html" title="next chapter">Building for Production</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<h3>Donate</h3>
+<p>
+Consider supporting the authors on <a href="https://www.gratipay.com/">Gratipay</a>:
+<script data-gratipay-username="nyergler"
+        data-gratipay-widget="button"
+        src="//gttp.co/v1.js"></script>
+</p>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+  </div>
+
+
+    <div class="footer">
+      &copy;2012-2017, Nathan R. Yergler.
+      
+      |
+      <a href="../_sources/01_intro/related.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

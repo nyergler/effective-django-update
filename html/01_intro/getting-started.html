@@ -1,0 +1,263 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Creating a Django Project &#8212; Effective Django</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0-pre',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Using Models" href="models.html" />
+    <link rel="prev" title="Getting Started with Django" href="index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="creating-a-django-project">
+<h1>Creating a Django Project<a class="headerlink" href="#creating-a-django-project" title="Permalink to this headline">¶</a></h1>
+<p>We&#8217;ll start exploring Django by looking at how to create a new project and the way a project is laid out. Along the way we&#8217;ll review (or learn) the basics of Python package management.</p>
+<div class="section" id="setting-up-your-environment">
+<h2>Setting Up Your Environment<a class="headerlink" href="#setting-up-your-environment" title="Permalink to this headline">¶</a></h2>
+<p>It&#8217;s important when starting a new project to create a space for it that won&#8217;t be influenced by anything else you&#8217;re working on. I often have multiple projects underway that may be using different versions of the same dependencies, which would be incredibly confusing if they weren&#8217;t isolated from one another.</p>
+<p>Python uses &#8220;virtual environments&#8221; (sometimes referred to as <code class="docutils literal"><span class="pre">virtualenvs</span></code> or <code class="docutils literal"><span class="pre">venvs</span></code>) to keep things isolated.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">We use Python 3.</p>
+</div>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">$</span> mkdir addresses
+<span class="gp">$</span> python3 -m venv addresses
+<span class="gp">$</span> <span class="nb">cd</span> addresses
+<span class="gp">$</span> <span class="nb">source</span> ./bin/activate
+<span class="gp">(addresses) $</span>
+</pre></div>
+</div>
+<p>The final command (<code class="docutils literal"><span class="pre">source</span> <span class="pre">./bin/activate</span></code>) activates the newly created virtual environment, as indicated by the changed prompt.</p>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>if you&#8217;re using a Windows computer, the <code class="docutils literal"><span class="pre">venv</span></code> module will create a <code class="docutils literal"><span class="pre">Scripts</span></code> directory instead of <code class="docutils literal"><span class="pre">bin</span></code>. To activate the virtual environemnt, run <code class="docutils literal"><span class="pre">.\Scripts\activate.bat</span></code> from the command prompt, or <code class="docutils literal"><span class="pre">.\Scripts\activate.ps1</span></code> from PowerShell.</p>
+<p class="last">For more information see the <a href="#id1"><span class="problematic" id="id2">`virtualenv on Windows documentation`_</span></a>.</p>
+</div>
+<div class="section" id="installing-requirements">
+<h3>Installing Requirements<a class="headerlink" href="#installing-requirements" title="Permalink to this headline">¶</a></h3>
+<p>Most languages provide some mechanism for specifying a set of dependencies and the versions you depend on. There are a few ways to do this with Python. For most of our examples we&#8217;ll be using <em>pip_</em>. Pip manages installation of Python packages, and can read <em>requirements files</em>. <a class="reference external" href="https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format">Requirements files</a> specify a list of dependencies, one per line, along with an optional version specification.</p>
+<p>To begin, create a <code class="docutils literal"><span class="pre">requirements.txt</span></code> file in the <code class="docutils literal"><span class="pre">addresses</span></code> directory with a single line in it.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">Django</span> <span class="o">~=</span> <span class="mf">1.11</span><span class="o">.</span><span class="mi">0</span>
+</pre></div>
+</div>
+<p>This single requirement specifies that we depend on Django, specifically any version _like_ <cite>1.11.0</cite>. In other words, we&#8217;ll get bug fix releases (i.e., 1.11.1, 1.11.2, etc), but not new, potentially incompatible versions (i.e., 1.12.0). Specifying the version is critical: without the version it&#8217;s impossible to know that what we developed with and tested with is actually what we&#8217;re running with.</p>
+<p>Once we have the requirements file, we can use <a class="reference external" href="http://www.pip-installer.org/">pip</a> to install the dependencies we specified.</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">(addresses)$</span> pip install -U -r requirements.txt
+<span class="go">Collecting Django~=1.11.0 (from -r requirements.txt (line 1))</span>
+<span class="go">  Downloading Django-1.11-py2.py3-none-any.whl (6.9MB)</span>
+<span class="go">    100% |XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX| 6.9MB 185kB/s</span>
+<span class="go">Collecting pytz (from Django~=1.11.0-&gt;-r requirements.txt (line 1))</span>
+<span class="go">  Downloading pytz-2017.2-py2.py3-none-any.whl (484kB)</span>
+<span class="go">    100% |XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX| 491kB 2.4MB/s</span>
+<span class="go">Installing collected packages: pytz, Django</span>
+<span class="go">Successfully installed Django-1.11 pytz-2017.2</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If pip complains that it expects a version specifier, you probably need to upgrade pip.</p>
+</div>
+<p>Pip will read each line of your requirements file, fetch the dependency, and then fetch any additionally required dependencies. Because we&#8217;re working in our virtual environment, we don&#8217;t need to worry about conflicts.</p>
+</div>
+</div>
+<div class="section" id="beginning-a-django-project">
+<h2>Beginning a Django Project<a class="headerlink" href="#beginning-a-django-project" title="Permalink to this headline">¶</a></h2>
+<p>When a building is under construction, scaffolding is often used to
+support the structure before it&#8217;s complete. The scaffolding can be
+temporary, or it can serve as part of the foundation for the
+building, but regardless it provides some support when you&#8217;re just
+starting out.</p>
+<p>Django, like many frameworks, provides scaffolding for your
+development efforts. It does this by making decisions and providing
+a starting point for your code that lets you focus on the problem
+you&#8217;re trying to solve, and not how to parse an HTTP request.
+Django provides HTTP, as well as file system scaffolding.</p>
+<p>The HTTP scaffolding handles things like parsing an HTTP request
+into a Python object and providing tools to easily create a
+response. The file system scaffolding is a little different: it&#8217;s a
+set of conventions for organizing your code. These conventions make
+it easier to add engineers to a project, since they
+(hypothetically) have some idea how the code is organized. In
+Django parlance, a <strong>project</strong> is the final product, and it
+assembles one or more <strong>applications</strong> together.</p>
+<div class="section" id="creating-the-project">
+<h3>Creating the Project<a class="headerlink" href="#creating-the-project" title="Permalink to this headline">¶</a></h3>
+<p>Django installs a <code class="docutils literal"><span class="pre">django-admin.py</span></code> script for handling scaffolding
+tasks. We&#8217;ll use <code class="docutils literal"><span class="pre">startproject</span></code> to create the project files. We
+specify the project name and the directory to start in; we&#8217;re already
+in our isolated environment so we can just say <code class="docutils literal"><span class="pre">.</span></code></p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">(addresses)$</span> django-admin.py startproject addressbook .
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p>Windows</p>
+<p class="last"><code class="docutils literal"><span class="pre">.\Scripts\django-admin.exe</span> <span class="pre">startproject</span> <span class="pre">addressbook</span> <span class="pre">.</span></code></p>
+</div>
+<p>Running <code class="docutils literal"><span class="pre">startproject</span></code> creates some new files in our project directory.</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">manage.py</span></code> is a pointer back to <code class="docutils literal"><span class="pre">django-admin.py</span></code> with an
+environment variable set, pointing to your project as the one to
+read settings from and operate on when needed.</li>
+<li><code class="docutils literal"><span class="pre">addressbook/settings.py</span></code> is where you&#8217;ll configure your project. It has a
+few sensible defaults, but no database chosen when you start.</li>
+<li><code class="docutils literal"><span class="pre">addressbook/urls.py</span></code> contains the URL to view mappings: we&#8217;ll talk more about
+that shortly.</li>
+<li><code class="docutils literal"><span class="pre">addressbook/wsgi.py</span></code> is a <a class="reference external" href="https://en.wikipedia.org/wiki/Web_Server_Gateway_Interface">WSGI</a> wrapper for your application. This is used
+by Django&#8217;s development servers, and possibly other containers
+like mod_wsgi, uwsgi, etc. in production.</li>
+</ul>
+<p>At this point Django has created the scaffolding necessary to run the web server (albeit one that doesn&#8217;t really do anything yet).</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">(addresses)$</span> python3 manage.py runserver
+<span class="go">Django version 1.11, using settings &#39;addressbook.settings&#39;</span>
+<span class="go">Starting development server at http://127.0.0.1:8000/</span>
+<span class="go">Quit the server with CONTROL-C.</span>
+</pre></div>
+</div>
+<p>You can follow that link and see Django&#8217;s &#8220;It worked!&#8221; page.</p>
+</div>
+<div class="section" id="creating-the-app">
+<h3>Creating the &#8220;App&#8221;<a class="headerlink" href="#creating-the-app" title="Permalink to this headline">¶</a></h3>
+<p>There&#8217;s one more piece of scaffolding we need to create, and that&#8217;s our &#8220;app&#8221;. This is where the majority of our work will occur. On many projects you&#8217;ll wind up with more than one &#8220;app&#8221;, either of your own creation or that you pull in from a third party source. You use the project &#8211; specifically settings.py and urls.py &#8211; to stich everything together.</p>
+<p>We&#8217;ll use the manage.py wrapper to create our app, which we&#8217;ll name <code class="docutils literal"><span class="pre">contacts</span></code>.</p>
+<div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">(addresses)$</span> python3 ./manage.py startapp contacts
+</pre></div>
+</div>
+<div class="sidebar">
+<p class="first sidebar-title">Project &amp; App Organization</p>
+<p class="last">In versions of Django prior to 1.4, apps were created as sub-directories of the project. You could move them around so long as you made sure your <code class="docutils literal"><span class="pre">PYTHONPATH</span></code> was set correctly, but the default made the two seem tightly coupled. By placing them as peers, it&#8217;s a little more obvious that apps are potentitally reusable; we&#8217;ll dive into that later.</p>
+</div>
+<p>Our project&#8217;s management script (<code class="docutils literal"><span class="pre">manage.py</span></code>) will create a new directory, <code class="docutils literal"><span class="pre">contacts</span></code>, with three nearly empty files:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">models.py</span></code> will contain the database models for your app</li>
+<li><code class="docutils literal"><span class="pre">views.py</span></code> will contain the views which respond to HTTP requests</li>
+<li><dl class="first docutils">
+<dt><code class="docutils literal"><span class="pre">tests.py</span></code> will contain the unit and integration tests you</dt>
+<dd>write</dd>
+</dl>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="review">
+<h2>Review<a class="headerlink" href="#review" title="Permalink to this headline">¶</a></h2>
+<p>TK</p>
+</div>
+</div>
+
+
+
+            
+              
+              <div class="page_footer">
+              <h4>Next</h4>
+                <a href="models.html">Using Models</a>
+              </div>
+              
+            
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Effective Django</a></h1>
+
+
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Getting Started with Django</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_production/index.html">Building for Production</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_advanced/index.html">Advanced Django</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/index.html">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgments.html">Acknowledgments</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Getting Started with Django</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Getting Started with Django</a></li>
+      <li>Next: <a href="models.html" title="next chapter">Using Models</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<h3>Donate</h3>
+<p>
+Consider supporting the authors on <a href="https://www.gratipay.com/">Gratipay</a>:
+<script data-gratipay-username="nyergler"
+        data-gratipay-widget="button"
+        src="//gttp.co/v1.js"></script>
+</p>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+  </div>
+
+
+    <div class="footer">
+      &copy;2012-2017, Nathan R. Yergler.
+      
+      |
+      <a href="../_sources/01_intro/getting-started.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
