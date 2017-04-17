@@ -1,0 +1,233 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Understanding Middleware &#8212; Effective Django</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0-pre',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Effective Django ORM" href="orm.html" />
+    <link rel="prev" title="Testing in Django" href="testing.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="understanding-middleware">
+<h1>Understanding Middleware<a class="headerlink" href="#understanding-middleware" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview-of-middleware">
+<h2>Overview of Middleware<a class="headerlink" href="#overview-of-middleware" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Lightweight &#8220;plug-ins&#8221; for Django</li>
+<li>Allows modifying the Request or Response, or mutating the View
+parameters</li>
+<li>Defined as a sequence (tuple) of classes in <code class="docutils literal"><span class="pre">settings</span></code></li>
+</ul>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">MIDDLEWARE_CLASSES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s1">&#39;django.middleware.common.CommonMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions.middleware.SessionMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.middleware.csrf.CsrfViewMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth.middleware.AuthenticationMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages.middleware.MessageMiddleware&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="middleware-hooks">
+<h2>Middleware Hooks<a class="headerlink" href="#middleware-hooks" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Middleware classes have hooks for processing:<ul>
+<li><code class="docutils literal"><span class="pre">request</span></code></li>
+<li><code class="docutils literal"><span class="pre">response</span></code></li>
+<li><code class="docutils literal"><span class="pre">view</span></code></li>
+<li><code class="docutils literal"><span class="pre">template_response</span></code></li>
+<li><code class="docutils literal"><span class="pre">exception</span></code></li>
+</ul>
+</li>
+<li>Individual middleware may implement some or all</li>
+</ul>
+</div>
+<div class="section" id="typical-uses">
+<h2>Typical Uses<a class="headerlink" href="#typical-uses" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Sessions</li>
+<li>Authentication</li>
+<li>CSRF Protection</li>
+<li>GZipping Content</li>
+</ul>
+</div>
+<div class="section" id="middleware-example">
+<h2>Middleware Example<a class="headerlink" href="#middleware-example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">LocaleMiddleware</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">process_request</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="s1">&#39;locale&#39;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="p">:</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">locale</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">cookies</span><span class="o">.</span><span class="n">locale</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">request</span><span class="o">.</span><span class="n">locale</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">process_response</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">response</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s1">&#39;locale&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="n">response</span><span class="o">.</span><span class="n">cookies</span><span class="p">[</span><span class="s1">&#39;locale&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">locale</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="request-middleware">
+<h2>Request Middleware<a class="headerlink" href="#request-middleware" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>On ingress, middleware is executed in order</li>
+<li>Request middleware returns <code class="docutils literal"><span class="pre">None</span></code> to continue processing</li>
+<li>Returning an <code class="docutils literal"><span class="pre">HttpResponse</span></code> short circuits additional middleware</li>
+</ul>
+</div>
+<div class="section" id="response-middleware">
+<h2>Response Middleware<a class="headerlink" href="#response-middleware" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>On egress, middleware is executed in reverse order</li>
+<li>Response middleware is executed <em>even if corresponding request
+middleware not executed</em></li>
+</ul>
+</div>
+<div class="section" id="writing-your-own">
+<h2>Writing Your Own<a class="headerlink" href="#writing-your-own" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Simple Python Classes</li>
+<li>Can implement all or part of the interface</li>
+<li>Middleware is long-lived</li>
+<li>The place for storing request-specific information is cunningly
+named <code class="docutils literal"><span class="pre">request</span></code></li>
+</ul>
+</div>
+<div class="section" id="wsgi-middleware">
+<h2>WSGI Middleware<a class="headerlink" href="#wsgi-middleware" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://wsgi.org">WSGI</a> also defines a middleware interface</li>
+<li>The two have similar functions, but are <strong>not</strong> the same</li>
+</ul>
+</div>
+</div>
+
+
+
+            
+              
+              <div class="page_footer">
+              <h4>Next</h4>
+                <a href="orm.html">Effective Django ORM</a>
+              </div>
+              
+            
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Effective Django</a></h1>
+
+
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../01_intro/index.html">Getting Started with Django</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_production/index.html">Building for Production</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_advanced/index.html">Advanced Django</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">Testing in Django</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Understanding Middleware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orm.html">Databases &amp; Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classbasedviews.html">Class Based Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html">Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="further-reading.html">Further Reading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="index.html#everything-in-its-right-place">Everything In Its Right Place</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgments.html">Acknowledgments</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Effective Django (legacy)</a><ul>
+      <li>Previous: <a href="testing.html" title="previous chapter">Testing in Django</a></li>
+      <li>Next: <a href="orm.html" title="next chapter">Effective Django ORM</a></li>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<h3>Donate</h3>
+<p>
+Consider supporting the authors on <a href="https://www.gratipay.com/">Gratipay</a>:
+<script data-gratipay-username="nyergler"
+        data-gratipay-widget="button"
+        src="//gttp.co/v1.js"></script>
+</p>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+  </div>
+
+
+    <div class="footer">
+      &copy;2012-2017, Nathan R. Yergler.
+      
+      |
+      <a href="../_sources/reference/middleware.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

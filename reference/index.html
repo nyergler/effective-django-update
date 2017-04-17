@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Effective Django (legacy) &#8212; Effective Django</title>
+    
+    <link rel="stylesheet" href="../_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '2.0-pre',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Introduction" href="intro.html" />
+    <link rel="prev" title="Advanced Django" href="../03_advanced/index.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body role="document">  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="effective-django-legacy">
+<h1>Effective Django (legacy)<a class="headerlink" href="#effective-django-legacy" title="Permalink to this headline">¶</a></h1>
+<p><em>This is the legacy effective django documentation, here for reference.</em></p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="testing.html">Testing in Django</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#testing-django">Testing Django</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#writing-a-unit-test">Writing a Unit Test</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#test-client">Test Client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#request-factory">Request Factory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#running-tests">Running Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html#further-reading">Further Reading</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="middleware.html">Understanding Middleware</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="middleware.html#overview-of-middleware">Overview of Middleware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="middleware.html#middleware-hooks">Middleware Hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="middleware.html#typical-uses">Typical Uses</a></li>
+<li class="toctree-l2"><a class="reference internal" href="middleware.html#middleware-example">Middleware Example</a></li>
+<li class="toctree-l2"><a class="reference internal" href="middleware.html#request-middleware">Request Middleware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="middleware.html#response-middleware">Response Middleware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="middleware.html#writing-your-own">Writing Your Own</a></li>
+<li class="toctree-l2"><a class="reference internal" href="middleware.html#wsgi-middleware">WSGI Middleware</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="orm.html">Databases &amp; Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="orm.html#configuring-the-database">Configuring the Database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orm.html#writing-models">Writing Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orm.html#working-with-models">Working with Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orm.html#what-goes-in-models">What Goes in Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orm.html#saving-data">Saving Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orm.html#managers">Managers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orm.html#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orm.html#querying-your-data">Querying Your Data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orm.html#orm-performance">ORM Performance</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="classbasedviews.html">Class Based Views</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="classbasedviews.html#id1">Class Based Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classbasedviews.html#using-class-based-views">Using Class Based Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classbasedviews.html#idiomatic-class-based-views">Idiomatic Class Based Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classbasedviews.html#http-methods">HTTP Methods</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classbasedviews.html#writing-composable-views">Writing Composable Views</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="forms.html">Forms</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="forms.html#form-basics">Form Basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html#validation">Validation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html#testing">Testing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html#rendering-forms">Rendering Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html#forms-for-models">Forms for Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html#form-sets">Form Sets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html#advanced-miscellaneous-detritus">Advanced &amp; Miscellaneous Detritus</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="further-reading.html">Further Reading</a></li>
+</ul>
+</div>
+<div class="section" id="everything-in-its-right-place">
+<h2>Everything In Its Right Place<a class="headerlink" href="#everything-in-its-right-place" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="context-table docutils">
+<colgroup>
+<col width="43%" />
+<col width="57%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><strong>Views</strong></td>
+<td>Convert Request to Response</td>
+</tr>
+<tr class="row-even"><td><strong>Forms</strong></td>
+<td>Convert input to Python objects</td>
+</tr>
+<tr class="row-odd"><td><strong>Models</strong></td>
+<td>Data and business logic</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+
+            
+              
+              <div class="page_footer">
+              <h4>Next</h4>
+                <a href="intro.html">Introduction</a>
+              </div>
+              
+            
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Effective Django</a></h1>
+
+
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../01_intro/index.html">Getting Started with Django</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../02_production/index.html">Building for Production</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../03_advanced/index.html">Advanced Django</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Reference</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="intro.html">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="testing.html">Testing in Django</a></li>
+<li class="toctree-l2"><a class="reference internal" href="middleware.html">Understanding Middleware</a></li>
+<li class="toctree-l2"><a class="reference internal" href="orm.html">Databases &amp; Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="classbasedviews.html">Class Based Views</a></li>
+<li class="toctree-l2"><a class="reference internal" href="forms.html">Forms</a></li>
+<li class="toctree-l2"><a class="reference internal" href="further-reading.html">Further Reading</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#everything-in-its-right-place">Everything In Its Right Place</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../acknowledgments.html">Acknowledgments</a></li>
+</ul>
+
+
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="../03_advanced/index.html" title="previous chapter">Advanced Django</a></li>
+      <li>Next: <a href="intro.html" title="next chapter">Introduction</a></li>
+  </ul></li>
+</ul>
+</div>
+<h3>Donate</h3>
+<p>
+Consider supporting the authors on <a href="https://www.gratipay.com/">Gratipay</a>:
+<script data-gratipay-username="nyergler"
+        data-gratipay-widget="button"
+        src="//gttp.co/v1.js"></script>
+</p>
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+  </div>
+
+
+    <div class="footer">
+      &copy;2012-2017, Nathan R. Yergler.
+      
+      |
+      <a href="../_sources/reference/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
