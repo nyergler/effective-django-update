@@ -51,10 +51,10 @@ Once we have the requirements file, we can use pip_ to install the dependencies 
    (addresses)$ pip install -U -r requirements.txt
    Collecting Django~=1.11.0 (from -r requirements.txt (line 1))
      Downloading Django-1.11-py2.py3-none-any.whl (6.9MB)
-       100% |████████████████████████████████| 6.9MB 185kB/s
+       100% |XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX| 6.9MB 185kB/s
    Collecting pytz (from Django~=1.11.0->-r requirements.txt (line 1))
      Downloading pytz-2017.2-py2.py3-none-any.whl (484kB)
-       100% |████████████████████████████████| 491kB 2.4MB/s
+       100% |XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX| 491kB 2.4MB/s
    Installing collected packages: pytz, Django
    Successfully installed Django-1.11 pytz-2017.2
 

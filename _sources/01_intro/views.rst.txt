@@ -379,7 +379,7 @@ Selenium_ is a tool for writing tests that drive a web browser, and that's what 
   (addresses) $ pip install selenium
   Collecting selenium
     Downloading selenium-3.3.3-py2.py3-none-any.whl (931kB)
-      100% |████████████████████████████████| 931kB 1.1MB/s
+      100% |XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX| 931kB 1.1MB/s
   Installing collected packages: selenium
   Successfully installed selenium-3.3.3
 
