@@ -51,6 +51,30 @@ information we might want to track for our contacts. Mailing
 addresses, for example. A single Contact may have multiple addresses
 associated with them, so we&#8217;ll store this in a separate table,
 allowing us to have multiple addresses for each Contact.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Address</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">contact</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Contact</span><span class="p">)</span>
+    <span class="n">address_type</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">address</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">city</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">state</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">postal_code</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">unique_together</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;contact&#39;</span><span class="p">,</span> <span class="s1">&#39;address_type&#39;</span><span class="p">,)</span>
+</pre></div>
+</div>
 <p>Django provides three types of fields for relating objects to each
 other: <code class="docutils literal"><span class="pre">ForeignKey</span></code> for creating one to many relationships,
 <code class="docutils literal"><span class="pre">ManyToManyField</span></code> for relating many to many, and <code class="docutils literal"><span class="pre">OneToOneField</span></code>
@@ -99,6 +123,26 @@ underscore notation to filter Addresses or Contacts based on the
 related objects.</p>
 <p>Let&#8217;s go ahead and add address display to our contacts. We&#8217;ll add the
 list of all Addresses to the Contact detail view in <code class="docutils literal"><span class="pre">contact.html</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="o">%</span> <span class="n">extends</span> <span class="s2">&quot;base.html&quot;</span> <span class="o">%</span><span class="p">}</span>
+
+<span class="p">{</span><span class="o">%</span> <span class="n">block</span> <span class="n">content</span> <span class="o">%</span><span class="p">}</span>
+
+<span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="p">{{</span> <span class="n">contact</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">h1</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">p</span><span class="o">&gt;</span><span class="n">Email</span><span class="p">:</span> <span class="p">{{</span> <span class="n">contact</span><span class="o">.</span><span class="n">email</span> <span class="p">}}</span><span class="o">&lt;/</span><span class="n">p</span><span class="o">&gt;</span>
+
+<span class="o">&lt;</span><span class="n">ul</span><span class="o">&gt;</span>
+<span class="p">{</span><span class="o">%</span> <span class="k">for</span> <span class="n">address</span> <span class="ow">in</span> <span class="n">contact</span><span class="o">.</span><span class="n">address_set</span><span class="o">.</span><span class="n">all</span> <span class="o">%</span><span class="p">}</span>
+   <span class="o">&lt;</span><span class="n">li</span><span class="o">&gt;</span><span class="p">{{</span> <span class="n">address</span><span class="o">.</span><span class="n">address</span> <span class="p">}}</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+       <span class="p">{{</span> <span class="n">address</span><span class="o">.</span><span class="n">city</span> <span class="p">}}</span> <span class="p">{{</span> <span class="n">address</span><span class="o">.</span><span class="n">state</span> <span class="p">}}</span><span class="o">&lt;</span><span class="n">br</span><span class="o">/&gt;</span>
+       <span class="p">{{</span> <span class="n">address</span><span class="o">.</span><span class="n">postal_code</span> <span class="p">}}</span>
+   <span class="o">&lt;/</span><span class="n">li</span><span class="o">&gt;</span>
+<span class="p">{</span><span class="o">%</span> <span class="n">endfor</span> <span class="o">%</span><span class="p">}</span>
+<span class="o">&lt;/</span><span class="n">ul</span><span class="o">&gt;</span>
+
+<span class="p">{</span><span class="o">%</span> <span class="n">endblock</span> <span class="o">%</span><span class="p">}</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="editing-related-objects">
 <h2>Editing Related Objects<a class="headerlink" href="#editing-related-objects" title="Permalink to this headline">¶</a></h2>
@@ -120,13 +164,70 @@ share a common related object (in this case the Contact).</p>
 <p>Because formsets are somewhat complex objects, Django provides factory
 functions that create the class for you. We&#8217;ll add a call to the
 factory to our <code class="docutils literal"><span class="pre">forms.py</span></code> file.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.forms.models</span> <span class="k">import</span> <span class="n">inlineformset_factory</span>
+
+<span class="kn">from</span> <span class="nn">contacts.models</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">Contact</span><span class="p">,</span>
+    <span class="n">Address</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># inlineformset_factory creates a Class from a parent model (Contact)</span>
+<span class="c1"># to a child model (Address)</span>
+<span class="n">ContactAddressFormSet</span> <span class="o">=</span> <span class="n">inlineformset_factory</span><span class="p">(</span>
+    <span class="n">Contact</span><span class="p">,</span>
+    <span class="n">Address</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <p>When we create the view, we&#8217;ll need to specify that this is the form
 we want to use, instead of having Django create one for us.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">EditContactAddressView</span><span class="p">(</span><span class="n">UpdateView</span><span class="p">):</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Contact</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;edit_addresses.html&#39;</span>
+    <span class="n">form_class</span> <span class="o">=</span> <span class="n">forms</span><span class="o">.</span><span class="n">ContactAddressFormSet</span>
+
+    <span class="k">def</span> <span class="nf">get_success_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1"># redirect to the Contact view.</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span><span class="o">.</span><span class="n">get_absolute_url</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>Note that even though we&#8217;re editing Addresses with this view, we still
 have <code class="docutils literal"><span class="pre">model</span></code> set to <code class="docutils literal"><span class="pre">Contact</span></code>. This is because an inline formset
 takes the parent object as its starting point.</p>
 <p>Once again, this needs to be wired up into the URL configuration.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^edit/(?P&lt;pk&gt;\d+)/addresses$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">EditContactAddressView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-edit-addresses&#39;</span><span class="p">,),</span>
+</pre></div>
+</div>
 <p>And we have a simple template.</p>
+<div class="highlight-django"><div class="highlight"><pre><span></span><span class="cp">{%</span> <span class="k">extends</span> <span class="s2">&quot;base.html&quot;</span> <span class="cp">%}</span><span class="x"></span>
+
+<span class="cp">{%</span> <span class="k">block</span> <span class="nv">content</span> <span class="cp">%}</span><span class="x"></span>
+
+<span class="x">&lt;h1&gt;Edit Addresses&lt;/h1&gt;</span>
+
+<span class="x">&lt;p&gt;Editing addresses for </span><span class="cp">{{</span> <span class="nv">contact</span> <span class="cp">}}</span><span class="x">&lt;/p&gt;</span>
+
+<span class="x">&lt;form action=&quot;</span><span class="cp">{%</span> <span class="k">url</span> <span class="s2">&quot;contacts-edit-addresses&quot;</span> <span class="nv">pk</span><span class="o">=</span><span class="nv">contact.id</span> <span class="cp">%}</span><span class="x">&quot;</span>
+<span class="x">      method=&quot;POST&quot;&gt;</span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">csrf_token</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{{</span> <span class="nv">form.management_form</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">    </span><span class="cp">{%</span> <span class="k">for</span> <span class="nv">address_form</span> <span class="k">in</span> <span class="nv">form</span> <span class="cp">%}</span><span class="x"></span>
+
+<span class="x">        &lt;ul&gt;</span>
+<span class="x">        </span><span class="cp">{{</span> <span class="nv">address_form.as_ul</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">        &lt;/ul&gt;</span>
+
+<span class="x">    </span><span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+
+<span class="x">    &lt;input type=&quot;submit&quot; value=&quot;Save&quot; /&gt;</span>
+<span class="x">&lt;/form&gt;</span>
+
+<span class="cp">{%</span> <span class="k">endblock</span> <span class="cp">%}</span><span class="x"></span>
+</pre></div>
+</div>
 <p>There are two new things in this template, both related to the fact
 we&#8217;re using a formset instead of a form. First, there&#8217;s a reference to
 <code class="docutils literal"><span class="pre">form.management_form</span></code>. This is a set of hidden fields that provide

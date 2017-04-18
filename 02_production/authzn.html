@@ -62,8 +62,34 @@ which is what we&#8217;ll use.</p>
 needs to be included in your project.</p>
 <p>Django enables thes by default when you create a project, as you can
 see in <code class="docutils literal"><span class="pre">addressbook/settings.py</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">INSTALLED_APPS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s1">&#39;django.contrib.auth&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.contenttypes&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sites&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.staticfiles&#39;</span><span class="p">,</span>
+    <span class="c1"># Uncomment the next line to enable the admin:</span>
+    <span class="c1"># &#39;django.contrib.admin&#39;,</span>
+    <span class="c1"># Uncomment the next line to enable admin documentation:</span>
+    <span class="c1"># &#39;django.contrib.admindocs&#39;,</span>
+    <span class="s1">&#39;contacts&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <p>In addition to installing the application, the middleware needs to be
 installed, as well.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">MIDDLEWARE_CLASSES</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s1">&#39;django.middleware.common.CommonMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.sessions.middleware.SessionMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.middleware.csrf.CsrfViewMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.auth.middleware.AuthenticationMiddleware&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;django.contrib.messages.middleware.MessageMiddleware&#39;</span><span class="p">,</span>
+    <span class="c1"># Uncomment the next line for simple clickjacking protection:</span>
+    <span class="c1"># &#39;django.middleware.clickjacking.XFrameOptionsMiddleware&#39;,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <p>If you&#8217;ll recall, during the first run of <code class="docutils literal"><span class="pre">syncdb</span></code>, Django asked if
 we wanted to create a superuser account. It did so because we had the
 application installed already.</p>
@@ -76,6 +102,11 @@ Note that it includes <em>views</em>, but not <em>templates</em>. We&#8217;ll ne
 provide those for our project.</p>
 <p>For this example we&#8217;ll just add support for login and logout views in
 our project. First, add the views to <code class="docutils literal"><span class="pre">addressbook/urls.py</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">urlpatterns</span> <span class="o">=</span> <span class="n">patterns</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^login/$&#39;</span><span class="p">,</span> <span class="s1">&#39;django.contrib.auth.views.login&#39;</span><span class="p">),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^logout/$&#39;</span><span class="p">,</span> <span class="s1">&#39;django.contrib.auth.views.logout&#39;</span><span class="p">),</span>
+</pre></div>
+</div>
 <p>Both the <a class="reference external" href="https://docs.djangoproject.com/en/1.10/topics/auth/default/#django.contrib.auth.views.login">login</a> and <a class="reference external" href="https://docs.djangoproject.com/en/1.10/topics/auth/default/#django.contrib.auth.views.login">logout</a> view have default template names
 (<code class="docutils literal"><span class="pre">registration/login.html</span></code> and <code class="docutils literal"><span class="pre">registration/logged_out.html</span></code>,
 respectively). Because these views are specific to our project and not
@@ -86,7 +117,43 @@ our re-usable Contacts application, we&#8217;ll create a new
 </div>
 <p>And tell Django to look in that directory for templates by setting
 <code class="docutils literal"><span class="pre">TEMPLATE_DIRS</span></code> in <code class="docutils literal"><span class="pre">addressbook/settings.py</span></code>.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">TEMPLATE_DIRS</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="c1"># Put strings here, like &quot;/home/html/django_templates&quot; or &quot;C:/www/django/templates&quot;.</span>
+    <span class="c1"># Always use forward slashes, even on Windows.</span>
+    <span class="c1"># Don&#39;t forget to use absolute paths, not relative paths.</span>
+    <span class="s1">&#39;addressbook/templates&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
 <p>Within that directory, first create <code class="docutils literal"><span class="pre">login.html</span></code>.</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>{% extends &quot;base.html&quot; %}
+
+{% block content %}
+
+{% if form.errors %}
+<span class="p">&lt;</span><span class="nt">p</span><span class="p">&gt;</span>Your username and password didn&#39;t match. Please try again.<span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+{% endif %}
+
+<span class="p">&lt;</span><span class="nt">form</span> <span class="na">method</span><span class="o">=</span><span class="s">&quot;post&quot;</span> <span class="na">action</span><span class="o">=</span><span class="s">&quot;{% url &#39;django.contrib.auth.views.login&#39; %}&quot;</span><span class="p">&gt;</span>
+{% csrf_token %}
+<span class="p">&lt;</span><span class="nt">table</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ form.username.label_tag }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ form.username }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;</span><span class="nt">tr</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ form.password.label_tag }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">td</span><span class="p">&gt;</span>{{ form.password }}<span class="p">&lt;/</span><span class="nt">td</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">tr</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">table</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;submit&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;login&quot;</span> <span class="p">/&gt;</span>
+<span class="p">&lt;</span><span class="nt">input</span> <span class="na">type</span><span class="o">=</span><span class="s">&quot;hidden&quot;</span> <span class="na">name</span><span class="o">=</span><span class="s">&quot;next&quot;</span> <span class="na">value</span><span class="o">=</span><span class="s">&quot;{{ next }}&quot;</span> <span class="p">/&gt;</span>
+<span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+
+{% endblock %}
+</pre></div>
+</div>
 <p>The login template inherits from our <code class="docutils literal"><span class="pre">base.html</span></code> template, and shows
 the login form provided by the view. The hidden <code class="docutils literal"><span class="pre">next</span></code> field allows
 the view to redirect the user to the page requested, if the login
@@ -96,6 +163,15 @@ request was triggered by a permission failure.</p>
 <p class="last">XXX</p>
 </div>
 <p>The logout template, <code class="docutils literal"><span class="pre">logged_out.html</span></code>, is simpler.</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>{% extends &quot;base.html&quot; %}
+
+{% block content %}
+
+Logged out!
+
+{% endblock %}
+</pre></div>
+</div>
 <p>All it needs to do is provide a message to let the user know the
 logout was successful.</p>
 <div class="sidebar">
@@ -113,10 +189,24 @@ successful login, and the default is <code class="docutils literal"><span class=
 override that, we&#8217;ll set the <code class="docutils literal"><span class="pre">LOGIN_REDIRECT_URL</span></code> value in
 <code class="docutils literal"><span class="pre">addressbook/settings.py</span></code> so that once a user logs in they&#8217;ll be
 redirected to the list of contacts.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">LOGIN_REDIRECT_URL</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span>
+</pre></div>
+</div>
 <p>Now that we can log in and log out, it&#8217;d be nice to show the logged in
 user in the header and links to login/logout in the header. We&#8217;ll add
 that to our <code class="docutils literal"><span class="pre">base.html</span></code> template, since we want that to show up
 everywhere.</p>
+<div class="highlight-html"><div class="highlight"><pre><span></span>  <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+    <span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+      {{ user }}
+      {% if user.is_anonymous %}
+      <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;{% url &#39;django.contrib.auth.views.login&#39; %}&quot;</span><span class="p">&gt;</span>login<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+      {% else %}
+      <span class="p">&lt;</span><span class="nt">a</span> <span class="na">href</span><span class="o">=</span><span class="s">&quot;{% url &#39;django.contrib.auth.views.logout&#39; %}&quot;</span><span class="p">&gt;</span>logout<span class="p">&lt;/</span><span class="nt">a</span><span class="p">&gt;</span>
+      {% endif %}
+    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</pre></div>
+</div>
 </div>
 <div class="section" id="authorization">
 <h2>Authorization<a class="headerlink" href="#authorization" title="Permalink to this headline">¶</a></h2>
@@ -138,6 +228,16 @@ calls it. Because we want to protect the views for all HTTP methods,
 we&#8217;ll override and decorate that.</p>
 <p>In <code class="docutils literal"><span class="pre">contacts/views.py</span></code> we&#8217;ll create a class mixin that ensures the
 user is logged in.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib.auth.decorators</span> <span class="k">import</span> <span class="n">login_required</span>
+<span class="kn">from</span> <span class="nn">django.utils.decorators</span> <span class="k">import</span> <span class="n">method_decorator</span>
+
+<span class="k">class</span> <span class="nc">LoggedInMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="nd">@method_decorator</span><span class="p">(</span><span class="n">login_required</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LoggedInMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>This is a <em>mixin</em> because it doesn&#8217;t provide a full implementation of
 a view on its own; it needs to be <em>mixed</em> with another view to have an
 effect.</p>
@@ -145,10 +245,23 @@ effect.</p>
 <code class="docutils literal"><span class="pre">contacts/views.py</span></code>. Each view will have our new <code class="docutils literal"><span class="pre">LoggedInMixin</span></code>
 added as the first superclass. For example, <code class="docutils literal"><span class="pre">ListContactView</span></code> will
 look as follows.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ListContactView</span><span class="p">(</span><span class="n">LoggedInMixin</span><span class="p">,</span> <span class="n">ListView</span><span class="p">):</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Contact</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;contact_list.html&#39;</span>
+
+    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="n">Contact</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">owner</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>Just as <code class="docutils literal"><span class="pre">LOGIN_REDIRECT_URL</span></code> tells Django where to send people
 <em>after</em> they log in, there&#8217;s a setting to control where to send them
 when they <em>need</em> to login. However, this can also be a view name, so
 we don&#8217;t have to bake an explicit URL into the settings.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">LOGIN_URL</span> <span class="o">=</span> <span class="s1">&#39;django.contrib.auth.views.login&#39;</span>
+</pre></div>
+</div>
 <div class="section" id="checking-ownership">
 <h3>Checking Ownership<a class="headerlink" href="#checking-ownership" title="Permalink to this headline">¶</a></h3>
 <p>Checking that you&#8217;re logged in is well and good, but to make this
@@ -163,6 +276,34 @@ There are three steps for</p>
 model.</p>
 <p>In <code class="docutils literal"><span class="pre">contacts/models.py</span></code>, we add an import and another field to our
 model.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib.auth.models</span> <span class="k">import</span> <span class="n">User</span>
+<span class="o">...</span>
+<span class="k">class</span> <span class="nc">Contact</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">first_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">last_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+
+    <span class="p">)</span>
+
+    <span class="n">email</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">EmailField</span><span class="p">()</span>
+
+    <span class="n">owner</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">User</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">first_name</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">last_name</span><span class="p">,</span>
+        <span class="p">])</span>
+
+    <span class="k">def</span> <span class="nf">get_absolute_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="n">reverse</span><span class="p">(</span><span class="s1">&#39;contacts-view&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;pk&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">})</span>
+</pre></div>
+</div>
 <p>Because Django doesn&#8217;t support migrations out of the box, we&#8217;ll need
 to blow away the database and re-run syncdb.</p>
 <p>XXX Perfect segue for talking about South</p>
@@ -172,9 +313,45 @@ classes have been handling for us.</p>
 <p>For the list of Contacts, we&#8217;ll want to override the <code class="docutils literal"><span class="pre">get_queryset</span></code>
 method, which returns the <a class="reference external" href="https://docs.djangoproject.com/en/1.10/ref/class-based-views/mixins-multiple-object/#django.views.generic.list.MultipleObjectMixin.get_queryset">Django QuerySet</a> of objects to be
 displayed.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ListContactView</span><span class="p">(</span><span class="n">LoggedInMixin</span><span class="p">,</span> <span class="n">ListView</span><span class="p">):</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Contact</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;contact_list.html&#39;</span>
+
+    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="n">Contact</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">owner</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>The remaining views are responsible for showing only a single object
 &#8211; the Contact (or its addresses). For those we&#8217;ll create another
 mixin that enforces authorization.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="k">import</span> <span class="n">PermissionDenied</span>
+<span class="o">...</span>
+<span class="k">class</span> <span class="nc">ContactOwnerMixin</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">get_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">queryset</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the object the view is displaying.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">queryset</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">queryset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">()</span>
+
+        <span class="n">pk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pk_url_kwarg</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">queryset</span> <span class="o">=</span> <span class="n">queryset</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span>
+            <span class="n">pk</span><span class="o">=</span><span class="n">pk</span><span class="p">,</span>
+            <span class="n">owner</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">obj</span> <span class="o">=</span> <span class="n">queryset</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+        <span class="k">except</span> <span class="n">ObjectDoesNotExist</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">PermissionDenied</span>
+
+        <span class="k">return</span> <span class="n">obj</span>
+</pre></div>
+</div>
 <p><code class="docutils literal"><span class="pre">ContactOwnerMixin</span></code> overrides the <code class="docutils literal"><span class="pre">get_object()</span></code> method, which is
 responsible for getting the object for a view to operate on. If it
 can&#8217;t find one with the specified primary key and owner, it raises the
@@ -187,6 +364,12 @@ will mask legitimate 404 (Not Found) errors.</p>
 </div>
 <p>We&#8217;ll use the <code class="docutils literal"><span class="pre">ContactOwnerMixin</span></code> in all of our views. For example,
 <code class="docutils literal"><span class="pre">ContactView</span></code> will look as follows:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ContactView</span><span class="p">(</span><span class="n">LoggedInMixin</span><span class="p">,</span> <span class="n">ContactOwnerMixin</span><span class="p">,</span> <span class="n">DetailView</span><span class="p">):</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Contact</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;contact.html&#39;</span>
+</pre></div>
+</div>
 <p>Note that the order of inheritance is important: the superclasses
 (<code class="docutils literal"><span class="pre">LoggedInMixin</span></code>, <code class="docutils literal"><span class="pre">ContactOwnerMixin</span></code>, <code class="docutils literal"><span class="pre">DetailView</span></code>) will be
 checked in the order listed for methods. By placing <code class="docutils literal"><span class="pre">LoggedInMixin</span></code>

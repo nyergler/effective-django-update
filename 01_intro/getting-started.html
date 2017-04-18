@@ -70,7 +70,7 @@
 <h3>Installing Requirements<a class="headerlink" href="#installing-requirements" title="Permalink to this headline">¶</a></h3>
 <p>Most languages provide some mechanism for specifying a set of dependencies and the versions you depend on. There are a few ways to do this with Python. For most of our examples we&#8217;ll be using <em>pip_</em>. Pip manages installation of Python packages, and can read <em>requirements files</em>. <a class="reference external" href="https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format">Requirements files</a> specify a list of dependencies, one per line, along with an optional version specification.</p>
 <p>To begin, create a <code class="docutils literal"><span class="pre">requirements.txt</span></code> file in the <code class="docutils literal"><span class="pre">addresses</span></code> directory with a single line in it.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">Django</span> <span class="o">~=</span> <span class="mf">1.11</span><span class="o">.</span><span class="mi">0</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">Django</span><span class="o">~=</span><span class="mf">1.11</span><span class="o">.</span><span class="mi">0</span>
 </pre></div>
 </div>
 <p>This single requirement specifies that we depend on Django, specifically any version _like_ <cite>1.11.0</cite>. In other words, we&#8217;ll get bug fix releases (i.e., 1.11.1, 1.11.2, etc), but not new, potentially incompatible versions (i.e., 1.12.0). Specifying the version is critical: without the version it&#8217;s impossible to know that what we developed with and tested with is actually what we&#8217;re running with.</p>
@@ -78,10 +78,10 @@
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">(addresses)$</span> pip install -U -r requirements.txt
 <span class="go">Collecting Django~=1.11.0 (from -r requirements.txt (line 1))</span>
 <span class="go">  Downloading Django-1.11-py2.py3-none-any.whl (6.9MB)</span>
-<span class="go">    100% |XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX| 6.9MB 185kB/s</span>
+<span class="go">    100% |████████████████████████████████| 6.9MB 185kB/s</span>
 <span class="go">Collecting pytz (from Django~=1.11.0-&gt;-r requirements.txt (line 1))</span>
 <span class="go">  Downloading pytz-2017.2-py2.py3-none-any.whl (484kB)</span>
-<span class="go">    100% |XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX| 491kB 2.4MB/s</span>
+<span class="go">    100% |████████████████████████████████| 491kB 2.4MB/s</span>
 <span class="go">Installing collected packages: pytz, Django</span>
 <span class="go">Successfully installed Django-1.11 pytz-2017.2</span>
 </pre></div>

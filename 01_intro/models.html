@@ -79,7 +79,7 @@ typically import your settings from <code class="docutils literal"><span class="
 <div class="section" id="creating-a-model">
 <h2>Creating a Model<a class="headerlink" href="#creating-a-model" title="Permalink to this headline">¶</a></h2>
 <p>Django models map (roughly) to a database table, and provide a place
-to encapsulate business logic. All models subclass the base <a class="reference external" href="https://docs.djangoproject.com/en/1.5/ref/models/instances/#django.db.models.Model">Model</a>
+to encapsulate business logic. All models subclass the base <a class="reference external" href="https://docs.djangoproject.com/en/1.11/ref/models/instances/#django.db.models.Model">Model</a>
 class, and contain field definitions. Let&#8217;s start by creating a simple
 Contact model for our application in <code class="docutils literal"><span class="pre">contacts/models.py</span></code>.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
@@ -103,7 +103,7 @@ Contact model for our application in <code class="docutils literal"><span class=
         <span class="p">])</span>
 </pre></div>
 </div>
-<p>Django provides a set of <a class="reference external" href="https://docs.djangoproject.com/en/1.5/ref/models/fields/">fields</a> that map to data types and different
+<p>Django provides a set of <a class="reference external" href="https://docs.djangoproject.com/en/1.11/ref/models/fields/">fields</a> that map to data types and different
 validation rules. For example, the <code class="docutils literal"><span class="pre">EmailField</span></code> here maps to the
 same column type as the <code class="docutils literal"><span class="pre">CharField</span></code>, but adds validation for the
 data.</p>
@@ -161,7 +161,7 @@ data.</p>
 <span class="go">  Applying contacts.0001_initial... OK</span>
 </pre></div>
 </div>
-<p>Note that Django created a table named <code class="docutils literal"><span class="pre">contacts_contact</span></code> for the Contacts model: by default Django will name your tables using a combination of the application name and model name. You can override that with the <a class="reference external" href="https://docs.djangoproject.com/en/1.5/ref/models/options/">model Meta</a> options.</p>
+<p>Note that Django created a table named <code class="docutils literal"><span class="pre">contacts_contact</span></code> for the Contacts model: by default Django will name your tables using a combination of the application name and model name. You can override that with the <a class="reference external" href="https://docs.djangoproject.com/en/1.11/ref/models/options/">model Meta</a> options.</p>
 </div>
 <div class="section" id="interacting-with-the-model">
 <h2>Interacting with the Model<a class="headerlink" href="#interacting-with-the-model" title="Permalink to this headline">¶</a></h2>
@@ -189,9 +189,9 @@ with it using the interactive shell.</p>
 </pre></div>
 </div>
 <p>There are a few new things here. First, the <code class="docutils literal"><span class="pre">manage.py</span> <span class="pre">shell</span></code> command gives us a interactive shell with Python&#8217;s path set up correctly for Django. If you try to run Python and just import your application, an Exception will be raised because Django doesn&#8217;t know which settings  to use, and therefore can&#8217;t map Model instances to the database.</p>
-<p>Second, there&#8217;s this <code class="docutils literal"><span class="pre">objects</span></code> property on our model class. That&#8217;s the model&#8217;s <a class="reference external" href="https://docs.djangoproject.com/en/1.5/topics/db/managers/">Manager</a>. If a single instance of a Model represents a row in the database, the Manager represents the table. The default model manager provides querying functionality, and can be customized. When we call <code class="docutils literal"><span class="pre">all()</span></code> or <code class="docutils literal"><span class="pre">filter()</span></code> or the Manager, a <a class="reference external" href="https://docs.djangoproject.com/en/1.5/ref/models/querysets/#django.db.models.query.QuerySet">QuerySet</a> is returned. A QuerySet is iterable, and loads data from the database as needed.</p>
+<p>Second, there&#8217;s this <code class="docutils literal"><span class="pre">objects</span></code> property on our model class. That&#8217;s the model&#8217;s <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/db/managers/">Manager</a>. If a single instance of a Model represents a row in the database, the Manager represents the table. The default model manager provides querying functionality, and can be customized. When we call <code class="docutils literal"><span class="pre">all()</span></code> or <code class="docutils literal"><span class="pre">filter()</span></code> or the Manager, a <a class="reference external" href="https://docs.djangoproject.com/en/1.11/ref/models/querysets/#django.db.models.query.QuerySet">QuerySet</a> is returned. A QuerySet is iterable, and loads data from the database as needed.</p>
 <p>Finally, there&#8217;s this <code class="docutils literal"><span class="pre">id</span></code> field that we didn&#8217;t define. Django adds
-an <code class="docutils literal"><span class="pre">id</span></code> field as the primary key for your model, unless you <a class="reference external" href="https://docs.djangoproject.com/en/1.5/topics/db/models/#automatic-primary-key-fields">specify
+an <code class="docutils literal"><span class="pre">id</span></code> field as the primary key for your model, unless you <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/db/models/#automatic-primary-key-fields">specify
 a primary key</a>.</p>
 </div>
 <div class="section" id="writing-a-test">
@@ -202,9 +202,10 @@ will get used in quite a few places, and it&#8217;s entirely conceivable
 it&#8217;d be exposed to end users. It&#8217;s worth writing a test so we
 understand how we expect it to operate.</p>
 <p>Django creates a <code class="docutils literal"><span class="pre">tests.py</span></code> file when it creates the application, so we&#8217;ll add our first test to that file in the contacts app.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.test</span> <span class="kn">import</span> <span class="n">TestCase</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.test</span> <span class="k">import</span> <span class="n">TestCase</span>
 
-<span class="kn">from</span> <span class="nn">.models</span> <span class="kn">import</span> <span class="n">Contact</span>
+<span class="kn">from</span> <span class="nn">.models</span> <span class="k">import</span> <span class="n">Contact</span>
+
 
 <span class="k">class</span> <span class="nc">ContactTests</span><span class="p">(</span><span class="n">TestCase</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;Contact model tests.&quot;&quot;&quot;</span>
@@ -248,7 +249,7 @@ break or influence another.</p>
 <li>Models define the fields in a table, and can contain business logic.</li>
 <li>The <code class="docutils literal"><span class="pre">makemigrations</span></code> manage command creates migrations based on your Python models</li>
 <li>The <code class="docutils literal"><span class="pre">migrate</span></code> manage command runs any pending migrations</li>
-<li>The model <a class="reference external" href="https://docs.djangoproject.com/en/1.5/topics/db/managers/">Manager</a> allows you to operate on the collection of
+<li>The model <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/db/managers/">Manager</a> allows you to operate on the collection of
 instances: querying, creating, etc.</li>
 <li>Write unit tests for methods you add to the model</li>
 <li>The <code class="docutils literal"><span class="pre">test</span></code> manage command runs the unit tests</li>

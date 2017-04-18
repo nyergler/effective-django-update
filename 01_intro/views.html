@@ -98,6 +98,17 @@ ways I didn&#8217;t initially expect.</p>
 <p>The basic view implementation is shockingly brief. We can write the
 view in just a few lines in the <code class="docutils literal"><span class="pre">views.py</span></code> file in our <code class="docutils literal"><span class="pre">contacts</span></code>
 application.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">ListView</span>
+
+<span class="kn">from</span> <span class="nn">contacts.models</span> <span class="k">import</span> <span class="n">Contact</span>
+
+
+<span class="k">class</span> <span class="nc">ListContactView</span><span class="p">(</span><span class="n">ListView</span><span class="p">):</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Contact</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;contact_list.html&#39;</span>
+</pre></div>
+</div>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="kn">import</span> <span class="n">ListView</span>
 <span class="kn">from</span> <span class="nn">contacts.models</span> <span class="kn">import</span> <span class="n">Contact</span>
 
@@ -113,21 +124,34 @@ application.</p>
 your Python code. Django looks for the URL configuration, defined as
 <code class="docutils literal"><span class="pre">urlpatterns</span></code>, in the <code class="docutils literal"><span class="pre">urls.py</span></code> file in your project.</p>
 <p>Let&#8217;s add a URL mapping for our contact list view in <code class="docutils literal"><span class="pre">addressbook/urls.py</span></code>.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="kn">import</span> <span class="n">url</span>
-<span class="kn">from</span> <span class="nn">django.contrib</span> <span class="kn">import</span> <span class="n">admin</span>
-<span class="kn">from</span> <span class="nn">contacts.views</span> <span class="kn">import</span> <span class="n">ListContactView</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="sd">&quot;&quot;&quot;addressbook URL Configuration</span>
 
+<span class="sd">The `urlpatterns` list routes URLs to views. For more information please see:</span>
+<span class="sd">    https://docs.djangoproject.com/en/1.11/topics/http/urls/</span>
+<span class="sd">Examples:</span>
+<span class="sd">Function views</span>
+<span class="sd">    1. Add an import:  from my_app import views</span>
+<span class="sd">    2. Add a URL to urlpatterns:  url(r&#39;^$&#39;, views.home, name=&#39;home&#39;)</span>
+<span class="sd">Class-based views</span>
+<span class="sd">    1. Add an import:  from other_app.views import Home</span>
+<span class="sd">    2. Add a URL to urlpatterns:  url(r&#39;^$&#39;, Home.as_view(), name=&#39;home&#39;)</span>
+<span class="sd">Including another URLconf</span>
+<span class="sd">    1. Import the include() function: from django.conf.urls import url, include</span>
+<span class="sd">    2. Add a URL to urlpatterns:  url(r&#39;^blog/&#39;, include(&#39;blog.urls&#39;))</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="k">import</span> <span class="n">url</span>
+<span class="kn">from</span> <span class="nn">django.contrib</span> <span class="k">import</span> <span class="n">admin</span>
 
 <span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
     <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
-    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^$&#39;</span><span class="p">,</span> <span class="n">ListContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">ListContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
         <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-list&#39;</span><span class="p">,),</span>
 <span class="p">]</span>
 </pre></div>
 </div>
-<p>The <code class="docutils literal"><span class="pre">admin.site.urls</span></code> URL was included for us by Django. We&#8217;ll talk more about what that does in the <a href="#id2"><span class="problematic" id="id3">`next section`_</span></a>.</p>
+<p>The <code class="docutils literal"><span class="pre">admin.site.urls</span></code> URL was included for us by Django. We&#8217;ll talk more about what that does in the <a href="#id3"><span class="problematic" id="id4">`next section`_</span></a>.</p>
 <p><code class="docutils literal"><span class="pre">urlpatterns</span></code> is a list of _routes_ that map a URL to a view. Let&#8217;s go through the parameters we used one by one.</p>
-<p>The first parameter is a <a href="#id4"><span class="problematic" id="id5">`regular expression`_</span></a>; any request whose URL matches the regular expression will be routed to the view. We want to show the contact list at the root of our application, so we specify <code class="docutils literal"><span class="pre">^$</span></code>. (Why might the trailing <code class="docutils literal"><span class="pre">$</span></code> be important here?)</p>
+<p>The first parameter is a <a href="#id5"><span class="problematic" id="id6">`regular expression`_</span></a>; any request whose URL matches the regular expression will be routed to the view. We want to show the contact list at the root of our application, so we specify <code class="docutils literal"><span class="pre">^$</span></code>. (Why might the trailing <code class="docutils literal"><span class="pre">$</span></code> be important here?)</p>
 <p>The second parameter, <code class="docutils literal"><span class="pre">ListContactView.as_view()</span></code>, specifies the view to call when the URL matches the regular expression. This can either be the actual callable that you&#8217;ve important (as we did here), or a string specifying the full Python package path to the view. Note that for class based views we <em>must</em> import the object and use it here. That&#8217;s because we have to call the class method <code class="docutils literal"><span class="pre">as_view()</span></code>; this method returns a function that handles instantiating our class and invoking with the request.</p>
 <p>The third argument, <code class="docutils literal"><span class="pre">name='contacts-list'</span></code>, specifies the &#8220;name&#8221; for this route. As we&#8217;ll see later, this is useful when we link from one view to another, or need to redirect; it allows us to use <code class="docutils literal"><span class="pre">contacts-list</span></code> instead of specifying the actual URL, so it&#8217;s much easier to move things around later.</p>
 <p>While the <code class="docutils literal"><span class="pre">urlpatterns</span></code> name <strong>must</strong> be defined in <code class="docutils literal"><span class="pre">urls.py</span></code>, Django also allows you to define a few other values in the URL configuration for exceptional cases. These include <code class="docutils literal"><span class="pre">handler403</span></code>, <code class="docutils literal"><span class="pre">handler404</span></code>, and
@@ -187,27 +211,26 @@ and create that.</p>
 <p>For our purposes, however, we don&#8217;t need that extra layer of directory
 structure, so we&#8217;ll specify the template to use explicitly, using the
 <code class="docutils literal"><span class="pre">template_name</span></code> property. Let&#8217;s add that one line to <code class="docutils literal"><span class="pre">views.py</span></code>.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="kn">import</span> <span class="n">ListView</span>
-<span class="kn">from</span> <span class="nn">contacts.models</span> <span class="kn">import</span> <span class="n">Contact</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">ListView</span>
+
+<span class="kn">from</span> <span class="nn">contacts.models</span> <span class="k">import</span> <span class="n">Contact</span>
+
 
 <span class="k">class</span> <span class="nc">ListContactView</span><span class="p">(</span><span class="n">ListView</span><span class="p">):</span>
+
     <span class="n">model</span> <span class="o">=</span> <span class="n">Contact</span>
     <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;contact_list.html&#39;</span>
 </pre></div>
 </div>
 <p>Create a <code class="docutils literal"><span class="pre">templates</span></code> subdirectory in our <code class="docutils literal"><span class="pre">contacts</span></code> application,
 and create <code class="docutils literal"><span class="pre">contact_list.html</span></code> there.</p>
-<div class="highlight-django"><div class="highlight"><pre><span></span><span class="x">&lt;html&gt;</span>
-<span class="x">&lt;body&gt;</span>
-<span class="x">  &lt;h1&gt;Contacts&lt;/h1&gt;</span>
+<div class="highlight-django"><div class="highlight"><pre><span></span><span class="x">&lt;h1&gt;Contacts&lt;/h1&gt;</span>
 
-<span class="x">  &lt;ul&gt;</span>
-<span class="x">    </span><span class="cp">{%</span> <span class="k">for</span> <span class="nv">contact</span> <span class="k">in</span> <span class="nv">object_list</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">      &lt;li class=&quot;contact&quot;&gt;</span><span class="cp">{{</span> <span class="nv">contact</span> <span class="cp">}}</span><span class="x">&lt;/li&gt;</span>
-<span class="x">    </span><span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
-<span class="x">  &lt;/ul&gt;</span>
-<span class="x">&lt;/body&gt;</span>
-<span class="x">&lt;/html&gt;</span>
+<span class="x">&lt;ul&gt;</span>
+<span class="x">  </span><span class="cp">{%</span> <span class="k">for</span> <span class="nv">contact</span> <span class="k">in</span> <span class="nv">object_list</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">    &lt;li class=&quot;contact&quot;&gt;</span><span class="cp">{{</span> <span class="nv">contact</span> <span class="cp">}}</span><span class="x">&lt;/li&gt;</span>
+<span class="x">  </span><span class="cp">{%</span> <span class="k">endfor</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">&lt;/ul&gt;</span>
 </pre></div>
 </div>
 <p>Opening the page in the browser, we should see one contact there, the
@@ -215,9 +238,33 @@ one we added earlier through the interactive shell.</p>
 </div>
 <div class="section" id="creating-contacts">
 <h2>Creating Contacts<a class="headerlink" href="#creating-contacts" title="Permalink to this headline">¶</a></h2>
-<p>With our contact list view we can see the contact we <a href="#id6"><span class="problematic" id="id7">`created through the interactive shell`_</span></a>, but adding all our data through that interface is going to get old fast. Next we&#8217;ll create a view for adding new contacts to the database.</p>
+<p>With our contact list view we can see the contact we <a href="#id7"><span class="problematic" id="id8">`created through the interactive shell`_</span></a>, but adding all our data through that interface is going to get old fast. Next we&#8217;ll create a view for adding new contacts to the database.</p>
 <p>Just like the list view, we&#8217;ll use one of Django&#8217;s generic views. In
 <code class="docutils literal"><span class="pre">views.py</span></code>, we can add the new view:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.core.urlresolvers</span> <span class="k">import</span> <span class="n">reverse</span>
+<span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="p">(</span>
+    <span class="n">CreateView</span><span class="p">,</span>
+    <span class="n">ListView</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="kn">from</span> <span class="nn">contacts.models</span> <span class="k">import</span> <span class="n">Contact</span>
+
+
+<span class="k">class</span> <span class="nc">ListContactView</span><span class="p">(</span><span class="n">ListView</span><span class="p">):</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Contact</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;contact_list.html&#39;</span>
+
+
+<span class="k">class</span> <span class="nc">CreateContactView</span><span class="p">(</span><span class="n">CreateView</span><span class="p">):</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Contact</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;edit_contact.html&#39;</span>
+
+    <span class="k">def</span> <span class="nf">get_success_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">reverse</span><span class="p">(</span><span class="s1">&#39;contacts-list&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="kn">import</span> <span class="n">CreateView</span>
 <span class="kn">from</span> <span class="nn">django.core.urlresolvers</span> <span class="kn">import</span> <span class="n">reverse</span>
 
@@ -250,6 +297,19 @@ usually want to accept <code class="docutils literal"><span class="pre">**kwargs
 </div>
 <p>The template is slightly more involved than the list template, but not
 much. Our <code class="docutils literal"><span class="pre">edit_contact.html</span></code> will look something like this.</p>
+<div class="highlight-django"><div class="highlight"><pre><span></span><span class="x">&lt;h1&gt;Add Contact&lt;/h1&gt;</span>
+
+<span class="x">&lt;form action=&quot;</span><span class="cp">{%</span> <span class="k">url</span> <span class="s2">&quot;contacts-new&quot;</span> <span class="cp">%}</span><span class="x">&quot; method=&quot;POST&quot;&gt;</span>
+<span class="x">  </span><span class="cp">{%</span> <span class="k">csrf_token</span> <span class="cp">%}</span><span class="x"></span>
+<span class="x">  &lt;ul&gt;</span>
+<span class="x">    </span><span class="cp">{{</span> <span class="nv">form.as_ul</span> <span class="cp">}}</span><span class="x"></span>
+<span class="x">  &lt;/ul&gt;</span>
+<span class="x">  &lt;input id=&quot;save_contact&quot; type=&quot;submit&quot; value=&quot;Save&quot; /&gt;</span>
+<span class="x">&lt;/form&gt;</span>
+
+<span class="x">&lt;a href=&quot;</span><span class="cp">{%</span> <span class="k">url</span> <span class="s2">&quot;contacts-list&quot;</span> <span class="cp">%}</span><span class="x">&quot;&gt;back to list&lt;/a&gt;</span>
+</pre></div>
+</div>
 <div class="highlight-django"><div class="highlight"><pre><span></span><span class="x">&lt;html&gt;</span>
 <span class="x">&lt;body&gt;</span>
 <span class="x">  &lt;h1&gt;Add Contact&lt;/h1&gt;</span>
@@ -273,16 +333,32 @@ much. Our <code class="docutils literal"><span class="pre">edit_contact.html</sp
 <p class="last">TK: No <code class="docutils literal"><span class="pre">()</span></code> required.</p>
 </div>
 <p>The Form object only includes the fields we specify in our model, so we have to manually add the surrounding <code class="docutils literal"><span class="pre">&lt;form&gt;</span></code> tag and submit button.</p>
-<p>We also add <code class="docutils literal"><span class="pre">{%</span> <span class="pre">csrf_token</span> <span class="pre">%}</span></code> within the form. This tag inserts a hidden input that Django uses to verify the request came from your project, and isn&#8217;t a forged cross-site request. (Try omitting it and creating a contact to see what happens without.) We&#8217;ll talk more about this later when we talk about <a href="#id8"><span class="problematic" id="id9">`security`_</span></a> and <a href="#id10"><span class="problematic" id="id11">`cross-site request forgery`_</span></a>.</p>
+<p>We also add <code class="docutils literal"><span class="pre">{%</span> <span class="pre">csrf_token</span> <span class="pre">%}</span></code> within the form. This tag inserts a hidden input that Django uses to verify the request came from your project, and isn&#8217;t a forged cross-site request. (Try omitting it and creating a contact to see what happens without.) We&#8217;ll talk more about this later when we talk about <a href="#id9"><span class="problematic" id="id10">`security`_</span></a> and <a href="#id11"><span class="problematic" id="id12">`cross-site request forgery`_</span></a>.</p>
 <p>Finally, we&#8217;re using the <code class="docutils literal"><span class="pre">url</span></code> template tag to create a link back to our contact list. Note that <code class="docutils literal"><span class="pre">contacts-list</span></code> is the name of our view from the URL configuration. By using <code class="docutils literal"><span class="pre">url</span></code> insetad of an explicit path, we don&#8217;t have to worry about a link breaking if we move things around. <code class="docutils literal"><span class="pre">url</span></code> is the template equivalent to the <code class="docutils literal"><span class="pre">reverse</span></code> function we used in our view&#8217;s <code class="docutils literal"><span class="pre">get_success_url()</span></code> earlier.</p>
 <p>You can configure the URL by adding the following line to our <code class="docutils literal"><span class="pre">urls.py</span></code> file.</p>
-<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">contacts.views</span> <span class="kn">import</span> <span class="n">CreateContactView</span>
+<div class="literal-diff-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">View file <a class="reference external" href="https://github.com/nyergler/effective-django-tutorial/blob/create_contact_view/addressbook/urls.py">addressbook/urls.py</a></span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.conf.urls</span> <span class="kn">import</span> <span class="n">patterns</span><span class="p">,</span> <span class="n">include</span><span class="p">,</span> <span class="n">url</span>
 
 <span class="o">...</span>
 
-  <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^new$&#39;</span><span class="p">,</span> <span class="n">CreateContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
-      <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-new&#39;</span><span class="p">,),</span>
+<span class="kn">import</span> <span class="nn">contacts.views</span>
+
+<span class="o">...</span>
+
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="n">patterns</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+
+<span class="o">...</span>
+
+<span class="n">urlpatterns</span> <span class="o">=</span> <span class="n">patterns</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">ListContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-list&#39;</span><span class="p">,),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^new$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">CreateContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-new&#39;</span><span class="p">,),</span>
+<span class="p">)</span>
 </pre></div>
+</div>
 </div>
 <p>Now you can go to <code class="docutils literal"><span class="pre">http://localhost:8000/new</span></code> to create new contacts.</p>
 <p>To complete the story, let&#8217;s add a link to add contacts from our contact list. Add the following HTML to the <code class="docutils literal"><span class="pre">contact_list.html</span></code> template to show that link.</p>
@@ -292,7 +368,7 @@ much. Our <code class="docutils literal"><span class="pre">edit_contact.html</sp
 </div>
 <div class="section" id="testing-your-views">
 <h2>Testing Your Views<a class="headerlink" href="#testing-your-views" title="Permalink to this headline">¶</a></h2>
-<p>So far our views have been pretty minimal: they leverage Django&#8217;s generic views, and contain very little of our own code or logic. One perspective is that this is how it should be: a view takes a request, and returns a response, delegating the issue of validating input to forms, and business logic to model methods (TK: <a href="#id12"><span class="problematic" id="id13">`service layer`_</span></a>). This is a perspective that I subscribe to: the less logic contained in views, the better.</p>
+<p>So far our views have been pretty minimal: they leverage Django&#8217;s generic views, and contain very little of our own code or logic. One perspective is that this is how it should be: a view takes a request, and returns a response, delegating the issue of validating input to forms, and business logic to model methods (TK: <a href="#id13"><span class="problematic" id="id14">`service layer`_</span></a>). This is a perspective that I subscribe to: the less logic contained in views, the better.</p>
 <p>However, there is code in views that should be tested, either by unit tests or integration tests. The distinction is important: unit tests are focused on testing a single piece of functionality, usually only a single function or method. When you&#8217;re writing a unit test, the assumption is that everything else has its own tests and is working properly. Integration tests attempt to test the system from end to end, so you can ensure that the points of integration are functioning properly. Most systems have both.</p>
 <p>Django has two tools that are helpful for writing unit tests for
 views: the Test <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/testing/overview/#module-django.test.client">Client</a> and the <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/testing/advanced/#django.test.client.RequestFactory">RequestFactory</a>. They have similar
@@ -348,7 +424,7 @@ manually pass it to your view and test the result.</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">(addresses) $</span> pip install selenium
 <span class="go">Collecting selenium</span>
 <span class="go">  Downloading selenium-3.3.3-py2.py3-none-any.whl (931kB)</span>
-<span class="go">    100% |XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX| 931kB 1.1MB/s</span>
+<span class="go">    100% |████████████████████████████████| 931kB 1.1MB/s</span>
 <span class="go">Installing collected packages: selenium</span>
 <span class="go">Successfully installed selenium-3.3.3</span>
 </pre></div>
@@ -425,7 +501,7 @@ manually pass it to your view and test the result.</p>
 <div class="admonition-todo admonition" id="index-1">
 <p class="first admonition-title">Todo</p>
 <p>Missing geckodriver</p>
-<p class="last">If you attempt to run these tests and receive an error message saying geckodriver is missing, you&#8217;ll need to <a href="#id14"><span class="problematic" id="id15">`download it&lt;https://github.com/mozilla/geckodriver/releases&gt;`_</span></a> and ensure it&#8217;s on the PATH.</p>
+<p class="last">If you attempt to run these tests and receive an error message saying geckodriver is missing, you&#8217;ll need to <a class="reference external" href="https://github.com/mozilla/geckodriver/releases">download it</a> and ensure it&#8217;s on the PATH.</p>
 </div>
 <p>In our example we&#8217;re using CSS Selectors to locate elements in the
 DOM, but you can also use Xpath. For many people it&#8217;s a matter of
