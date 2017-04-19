@@ -49,6 +49,24 @@
 <p>In addition to creating Contacts, we&#8217;ll of course want to edit them.
 As with the List and Create views, Django has a generic view we can
 use as a starting point.</p>
+<div class="literal-diff-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">View file <a class="reference external" href="https://github.com/nyergler/effective-django-tutorial/blob/edit_contact_view/contacts/views.py">contacts/views.py</a></span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">CreateContactView</span><span class="p">(</span><span class="n">CreateView</span><span class="p">):</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Contact</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;edit_contact.html&#39;</span>
+
+<span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">get_context_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+        <span class="n">context</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">CreateContactView</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_context_data</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">context</span><span class="p">[</span><span class="s1">&#39;action&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reverse</span><span class="p">(</span><span class="s1">&#39;contacts-new&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">context</span>
+</pre></div>
+</div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">UpdateView</span>
 <span class="o">...</span>
 <span class="k">class</span> <span class="nc">UpdateContactView</span><span class="p">(</span><span class="n">UpdateView</span><span class="p">):</span>
@@ -67,9 +85,19 @@ use as a starting point.</p>
 <li>we need to either: provide a pk/slug, or override get_object().</li>
 <li>we&#8217;ll provide pk in the URL</li>
 </ul>
-<div class="highlight-default"><div class="highlight"><pre><span></span>    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^edit/(?P&lt;pk&gt;\d+)/$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">UpdateContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+<div class="literal-diff-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text">View file <a class="reference external" href="https://github.com/nyergler/effective-django-tutorial/blob/edit_contact_view/addressbook/urls.py">addressbook/urls.py</a></span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">ListContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-list&#39;</span><span class="p">,),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^new$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">CreateContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-new&#39;</span><span class="p">,),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^edit/(?P&lt;pk&gt;\d+)/$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">UpdateContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
         <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-edit&#39;</span><span class="p">,),</span>
+<span class="p">]</span>
 </pre></div>
+</div>
 </div>
 <p>We&#8217;ll update the contact list to include an edit link next to each
 contact.</p>
@@ -98,7 +126,7 @@ the existing record, it creates a new one. Sad face.</p>
 <p>If we look at the source of the edit HTML, we can easily see the
 reason: the form targets <code class="docutils literal"><span class="pre">/new</span></code>, not our edit URL. To fix this &#8211;
 and still allow re-using the template &#8211; we&#8217;re going to add some
-information to the template context.</p>
+information to the <a href="#id8"><span class="problematic" id="id9">`template context`_</span></a>.</p>
 <p>The template context is the information available to a template when
 it&#8217;s rendered. This is a combination of information you provide in
 your view &#8211; either directly or indirectly &#8211; and information added by
@@ -150,13 +178,13 @@ change the title based on whether or not we&#8217;ve previously saved.</p>
 <span class="x">&lt;form action=&quot;</span><span class="cp">{{</span> <span class="nv">action</span> <span class="cp">}}</span><span class="x">&quot; method=&quot;POST&quot;&gt;</span>
 </pre></div>
 </div>
-<p>You may wonder where the <code class="docutils literal"><span class="pre">contact</span></code> value in the contact comes from:
-the class based views that wrap a single object (those that take
+<p>You may wonder where the <code class="docutils literal"><span class="pre">contact</span></code> value in the contact comes from.
+The class based views that wrap a single object (those that take
 a primary key or slug) expose that to the context in two different
 ways: as a variable named <code class="docutils literal"><span class="pre">object</span></code>, and as a variable named after
 the model class. The latter often makes your templates easier to read
-and understand later. You can customize this name by overriding
-<code class="docutils literal"><span class="pre">get_context_object_name</span></code> on your view.</p>
+and understand later. (You can customize this name by overriding
+<code class="docutils literal"><span class="pre">get_context_object_name</span></code> on your view.)</p>
 <div class="sidebar">
 <p class="first sidebar-title">Made a Change? Run the Tests.</p>
 <p>We&#8217;ve just made a change to our <code class="docutils literal"><span class="pre">CreateContactView</span></code>, which means
@@ -178,9 +206,9 @@ When it processes a HTTP GET request, it displays a confirmation page,
 and when it receives an HTTP DELETE or POST, it deletes the object and
 redirects to the success URL.</p>
 <p>We add the view definition to <code class="docutils literal"><span class="pre">views.py</span></code>:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">DeleteView</span>
-<span class="o">...</span>
-<span class="k">class</span> <span class="nc">DeleteContactView</span><span class="p">(</span><span class="n">DeleteView</span><span class="p">):</span>
+<div class="literal-diff-wrapper docutils container" id="id3">
+<div class="code-block-caption"><span class="caption-text">View file <a class="reference external" href="https://github.com/nyergler/effective-django-tutorial/blob/delete_contact_view/contacts/views.py">contacts/views.py</a></span><a class="headerlink" href="#id3" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">DeleteContactView</span><span class="p">(</span><span class="n">DeleteView</span><span class="p">):</span>
 
     <span class="n">model</span> <span class="o">=</span> <span class="n">Contact</span>
     <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;delete_contact.html&#39;</span>
@@ -188,6 +216,7 @@ redirects to the success URL.</p>
     <span class="k">def</span> <span class="nf">get_success_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">reverse</span><span class="p">(</span><span class="s1">&#39;contacts-list&#39;</span><span class="p">)</span>
 </pre></div>
+</div>
 </div>
 <p>And create the template, <code class="docutils literal"><span class="pre">delete_contact.html</span></code>, in our <code class="docutils literal"><span class="pre">templates</span></code>
 directory.</p>
@@ -210,9 +239,21 @@ directory.</p>
 </pre></div>
 </div>
 <p>Of course we need to add this to the URL definitions:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^delete/(?P&lt;pk&gt;\d+)/$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">DeleteContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+<div class="literal-diff-wrapper docutils container" id="id4">
+<div class="code-block-caption"><span class="caption-text">View file <a class="reference external" href="https://github.com/nyergler/effective-django-tutorial/blob/delete_contact_view/addressbook/urls.py">addressbook/urls.py</a></span><a class="headerlink" href="#id4" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">ListContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-list&#39;</span><span class="p">,),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^new$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">CreateContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-new&#39;</span><span class="p">,),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^edit/(?P&lt;pk&gt;\d+)/$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">UpdateContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-edit&#39;</span><span class="p">,),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^delete/(?P&lt;pk&gt;\d+)/$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">DeleteContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
         <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-delete&#39;</span><span class="p">,),</span>
+<span class="p">]</span>
 </pre></div>
+</div>
 </div>
 <p>And we&#8217;ll add the link to delete to the edit page.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="o">%</span> <span class="k">if</span> <span class="n">contact</span><span class="o">.</span><span class="n">id</span> <span class="o">%</span><span class="p">}</span>
@@ -235,6 +276,15 @@ of it as the single serving <code class="docutils literal"><span class="pre">Lis
     <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;contact.html&#39;</span>
 </pre></div>
 </div>
+<div class="literal-diff-wrapper docutils container" id="id5">
+<div class="code-block-caption"><span class="caption-text">View file <a class="reference external" href="https://github.com/nyergler/effective-django-tutorial/blob/contact_detail_view/contacts/views.py">contacts/views.py</a></span><a class="headerlink" href="#id5" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ContactView</span><span class="p">(</span><span class="n">DetailView</span><span class="p">):</span>
+
+    <span class="n">model</span> <span class="o">=</span> <span class="n">Contact</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s1">&#39;contact.html&#39;</span>
+</pre></div>
+</div>
+</div>
 <p>Again, the template is pretty straight forward; we create
 <code class="docutils literal"><span class="pre">contact.html</span></code> in the <code class="docutils literal"><span class="pre">templates</span></code> directory.</p>
 <div class="highlight-html"><div class="highlight"><pre><span></span>{% extends &quot;base.html&quot; %}
@@ -249,15 +299,59 @@ of it as the single serving <code class="docutils literal"><span class="pre">Lis
 </pre></div>
 </div>
 <p>And add the URL mapping:</p>
-<div class="highlight-default"><div class="highlight"><pre><span></span>    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(?P&lt;pk&gt;\d+)/$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">ContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
-        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-view&#39;</span><span class="p">,),</span>
+<div class="highlight-default"><div class="highlight"><pre><span></span>    <span class="mf">1.</span> <span class="n">Add</span> <span class="n">an</span> <span class="n">import</span><span class="p">:</span>  <span class="kn">from</span> <span class="nn">other_app.views</span> <span class="k">import</span> <span class="n">Home</span>
+    <span class="mf">2.</span> <span class="n">Add</span> <span class="n">a</span> <span class="n">URL</span> <span class="n">to</span> <span class="n">urlpatterns</span><span class="p">:</span>  <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^$&#39;</span><span class="p">,</span> <span class="n">Home</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;home&#39;</span><span class="p">)</span>
 </pre></div>
+</div>
+<div class="literal-diff-wrapper docutils container" id="id6">
+<div class="code-block-caption"><span class="caption-text">View file <a class="reference external" href="https://github.com/nyergler/effective-django-tutorial/blob/contact_detail_view/addressbook/urls.py">addressbook/urls.py</a></span><a class="headerlink" href="#id6" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">urlpatterns</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^admin/&#39;</span><span class="p">,</span> <span class="n">admin</span><span class="o">.</span><span class="n">site</span><span class="o">.</span><span class="n">urls</span><span class="p">),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">ListContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-list&#39;</span><span class="p">,),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^(?P&lt;pk&gt;\d+)/$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">ContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-view&#39;</span><span class="p">,),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^new$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">CreateContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-new&#39;</span><span class="p">,),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^edit/(?P&lt;pk&gt;\d+)/$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">UpdateContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-edit&#39;</span><span class="p">,),</span>
+    <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^delete/(?P&lt;pk&gt;\d+)/$&#39;</span><span class="p">,</span> <span class="n">contacts</span><span class="o">.</span><span class="n">views</span><span class="o">.</span><span class="n">DeleteContactView</span><span class="o">.</span><span class="n">as_view</span><span class="p">(),</span>
+        <span class="n">name</span><span class="o">=</span><span class="s1">&#39;contacts-delete&#39;</span><span class="p">,),</span>
+<span class="p">]</span>
+</pre></div>
+</div>
 </div>
 <p>We&#8217;re also going to add a method to our Contact model,
 <code class="docutils literal"><span class="pre">get_absolute_url</span></code>. <code class="docutils literal"><span class="pre">get_absolute_url</span></code> is a Django convention for
 obtaining the URL of a single model instance. In this case it&#8217;s just
 going to be a call to <code class="docutils literal"><span class="pre">reverse</span></code>, but by providing this method, our
 model will play nicely with other parts of Django.</p>
+<div class="literal-diff-wrapper docutils container" id="id7">
+<div class="code-block-caption"><span class="caption-text">View file <a class="reference external" href="https://github.com/nyergler/effective-django-tutorial/blob/contact_detail_view/contacts/models.py">contacts/models.py</a></span><a class="headerlink" href="#id7" title="Permalink to this code">¶</a></div>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.core.urlresolvers</span> <span class="kn">import</span> <span class="n">reverse</span>
+
+<span class="o">...</span>
+
+<span class="k">class</span> <span class="nc">Contact</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">first_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">last_name</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span>
+        <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+
+    <span class="p">)</span>
+
+    <span class="n">email</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">EmailField</span><span class="p">()</span>
+
+<span class="o">...</span>
+
+    <span class="k">def</span> <span class="nf">get_absolute_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="k">return</span> <span class="n">reverse</span><span class="p">(</span><span class="s1">&#39;contacts-view&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;pk&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">})</span>
+</pre></div>
+</div>
+</div>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Contact</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 <span class="o">...</span>
     <span class="k">def</span> <span class="nf">get_absolute_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
