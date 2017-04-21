@@ -328,7 +328,7 @@ much. Our <code class="docutils literal"><span class="pre">edit_contact.html</sp
 <p>So far our views have been pretty minimal: they leverage Django&#8217;s generic views, and contain very little of our own code or logic. One perspective is that this is how it should be: a view takes a request, and returns a response, delegating the issue of validating input to forms, and business logic to model methods (TK: <a href="#id16"><span class="problematic" id="id17">`service layer`_</span></a>). This is a perspective that I subscribe to: the less logic contained in views, the better.</p>
 <p>However, there is code in views that should be tested, either by unit tests or integration tests. The distinction is important: unit tests are focused on testing a single piece of functionality, usually only a single function or method. When you&#8217;re writing a unit test, the assumption is that everything else has its own tests and is working properly. Integration tests attempt to test the system from end to end, so you can ensure that the points of integration are functioning properly. Most systems have both.</p>
 <p>Django has two tools that are helpful for writing unit tests for
-views: the Test <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/testing/overview/#module-django.test.client">Client</a> and the <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/testing/advanced/#django.test.client.RequestFactory">RequestFactory</a>. They have similar
+views: the Test <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/testing/tools/#the-test-client">Client</a> and the <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/testing/advanced/#the-request-factory">RequestFactory</a>. They have similar
 APIs, but approach things differently. The <code class="docutils literal"><span class="pre">TestClient</span></code> takes a URL
 to retrieve, and resolves it against your project&#8217;s URL configuration.
 It then creates a test request, and passes that request through your
@@ -417,7 +417,7 @@ manually pass it to your view and test the result.</p>
 <div class="section" id="integration-tests">
 <h2>Integration Tests<a class="headerlink" href="#integration-tests" title="Permalink to this headline">¶</a></h2>
 <p>Django 1.4 added a new <code class="docutils literal"><span class="pre">TestCase</span></code> base class, the <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/testing/tools/#liveservertestcase">LiveServerTestCase</a>. This is very much what it sounds like: a test case that runs against a live server. By default Django will start the development server for you when it runs these tests, but they can also be run against another server.</p>
-<p><a class="reference external" href="http://seleniumhq.org/">Selenium</a> is a tool for writing tests that drive a web browser, and that&#8217;s what we&#8217;ll use for our integration tests. By using Selenium, you&#8217;re able to automate different browers (Chrome, Firefox, etc), and interact with your full application much as the user would. Before writing tests to use it, we&#8217;ll need to install the Python implementation.</p>
+<p><a class="reference external" href="http://www.seleniumhq.org/">Selenium</a> is a tool for writing tests that drive a web browser, and that&#8217;s what we&#8217;ll use for our integration tests. By using Selenium, you&#8217;re able to automate different browers (Chrome, Firefox, etc), and interact with your full application much as the user would. Before writing tests to use it, we&#8217;ll need to install the Python implementation.</p>
 <div class="highlight-console"><div class="highlight"><pre><span></span><span class="gp">(addresses) $</span> pip install selenium
 <span class="go">Collecting selenium</span>
 <span class="go">  Downloading selenium-3.3.3-py2.py3-none-any.whl (931kB)</span>
@@ -518,7 +518,7 @@ DOM changes.</p>
 <li>Django&#8217;s class-based views allow you to create simple views with very little effort.</li>
 <li>URLs are defined in the <code class="docutils literal"><span class="pre">urls.py</span></code> file in your _project_.</li>
 <li>Naming URLs allows you to generate the URL for a view.</li>
-<li><a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/testing/advanced/#django.test.client.RequestFactory">RequestFactory</a> creates Requests for testing Views
+<li><a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/testing/advanced/#the-request-factory">RequestFactory</a> creates Requests for testing Views
 with</li>
 <li><a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/testing/tools/#liveservertestcase">LiveServerTestCase</a> provides basis for writing integration tests</li>
 </ul>

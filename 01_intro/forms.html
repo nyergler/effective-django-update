@@ -45,19 +45,19 @@
   <div class="section" id="form-basics">
 <h1>Form Basics<a class="headerlink" href="#form-basics" title="Permalink to this headline">¶</a></h1>
 <p>Up until this point we&#8217;ve been using forms without really needing to
-be aware of it. A <a class="reference external" href="https://docs.djangoproject.com/en/1.5/topics/forms/">Django Form</a> is responsible for taking some user
+be aware of it. A <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/forms/">Django Form</a> is responsible for taking some user
 input, validating it, and turning it into Python objects. They also
 have some handy rendering methods, but I consider those sugar: the
 real power is in making sure that input from your users is what it
 says it is.</p>
-<p>The <a class="reference external" href="https://docs.djangoproject.com/en/1.5/topics/class-based-views/">Generic Views</a>, specifically the ones we&#8217;ve been using, all
+<p>The <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/class-based-views/">Generic Views</a>, specifically the ones we&#8217;ve been using, all
 operate on a particular model. Django is able to take the model
 definition that we&#8217;ve created and extrapolate a Form from it. Django
 can do this because both Models and Forms are constructed of fields
 that have a particular type and particular validation rules. Models
 use those fields to map data to types that your database understands;
 Forms use them to map input to Python types <a class="footnote-reference" href="#id2" id="id1">[1]</a>. Forms that map to a
-particular Model are called <a class="reference external" href="https://docs.djangoproject.com/en/1.5/topics/forms/modelforms">ModelForms</a>; you can think of them as
+particular Model are called <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/forms/modelforms">ModelForms</a>; you can think of them as
 taking user input and transforming it into an instance of a Model.</p>
 <table class="docutils footnote" frame="void" id="id2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
@@ -107,7 +107,7 @@ label, and then there are additional keyword arguments; in this case,
 we simply mark it required.</p>
 <p>Finally, in the constructor we mutate the <code class="docutils literal"><span class="pre">initial</span></code> kwarg.
 <code class="docutils literal"><span class="pre">initial</span></code> is a dictionary of values that will be used as the default
-values for an <a class="reference external" href="https://docs.djangoproject.com/en/1.5/ref/forms/api/#ref-forms-api-bound-unbound">unbound form</a>. Model Forms have another kwarg,
+values for an <a class="reference external" href="https://docs.djangoproject.com/en/1.11/ref/forms/api/#ref-forms-api-bound-unbound">unbound form</a>. Model Forms have another kwarg,
 <code class="docutils literal"><span class="pre">instance</span></code>, that holds the instance we&#8217;re editing.</p>
 </div>
 <div class="section" id="overriding-the-default-form">
@@ -214,7 +214,7 @@ full control. First, a form is iterable; try replacing your call to
 </div>
 <p>As you can see, <code class="docutils literal"><span class="pre">field</span></code> renders as the input for each field in the
 form. When you iterate over a Form, you&#8217;re iterating over a sequence
-of <a class="reference external" href="https://docs.djangoproject.com/en/1.5/ref/forms/api/#django.forms.BoundField">BoundField</a> objects. A <code class="docutils literal"><span class="pre">BoundField</span></code> wraps the field definition
+of <a class="reference external" href="https://docs.djangoproject.com/en/1.11/ref/forms/api/#django.forms.BoundField">BoundField</a> objects. A <code class="docutils literal"><span class="pre">BoundField</span></code> wraps the field definition
 from your Form (or derived from the ModelForm) along with any data and
 error state it may be bound to. This means it has some properties that
 are handy for customizing rendering.</p>
@@ -294,7 +294,7 @@ the appropriate <code class="docutils literal"><span class="pre">for</span></cod
 </div>
 </li>
 <li><p class="first">Using <code class="docutils literal"><span class="pre">field.errors</span></code> to show the errors in a specific place. The
-Django Form documentation has details on further customizing <a class="reference external" href="https://docs.djangoproject.com/en/1.5/ref/forms/api/#how-errors-are-displayed">how
+Django Form documentation has details on further customizing <a class="reference external" href="https://docs.djangoproject.com/en/1.11/ref/forms/api/#how-errors-are-displayed">how
 errors are displayed</a>.</p>
 </li>
 <li><p class="first">Finally, <code class="docutils literal"><span class="pre">field.help_text</span></code>. You can specify a <code class="docutils literal"><span class="pre">help_text</span></code>

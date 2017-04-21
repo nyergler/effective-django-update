@@ -156,9 +156,9 @@ go to create the Address.</p>
 relationship between Contacts and Addresses.</p>
 <p>The editing interface we&#8217;re going to build for Addresses is one that
 allows you to edit all the addresses for a Contact at once. To do
-this, we&#8217;ll need to create a <a class="reference external" href="https://docs.djangoproject.com/en/1.5/topics/forms/formsets/">FormSet</a> that handles all the Addresses
+this, we&#8217;ll need to create a <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/forms/formsets/">FormSet</a> that handles all the Addresses
 for a single Contact. A FormSet is an object that manages multiple
-copies of the same Form (or ModelForm) in a single page. The <a class="reference external" href="https://docs.djangoproject.com/en/1.5/topics/forms/modelforms/#inline-formsets">Inline
+copies of the same Form (or ModelForm) in a single page. The <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/forms/modelforms/#inline-formsets">Inline
 FormSet</a> does this for a set of objects (in this case Addresses) that
 share a common related object (in this case the Contact).</p>
 <p>Because formsets are somewhat complex objects, Django provides factory

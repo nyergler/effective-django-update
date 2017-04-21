@@ -47,12 +47,12 @@
 <p>In this section you&#8217;ll learn how to configure Django to connect to a database, as well as the basics of creating Python classes (models) that represent information in the database.</p>
 <div class="section" id="configuring-the-database">
 <h2>Configuring the Database<a class="headerlink" href="#configuring-the-database" title="Permalink to this headline">¶</a></h2>
-<p>Django includes support out of the box for MySQL, PostgreSQL, SQLite3, and Oracle. <a class="reference external" href="http://docs.python.org/2/library/sqlite3.html">SQLite3</a> is included with Python, so we&#8217;ll use it for our project for simplicity. If you were going to use MySQL, for example, you&#8217;d need to add <a class="reference external" href="https://pypi.python.org/pypi/MySQL-python">mysql-python</a> to your <code class="docutils literal"><span class="pre">requirements.txt</span></code> file. We&#8217;ll discuss using databases like MySQL and Postgres in <a href="#id1"><span class="problematic" id="id2">Deploying_</span></a>.</p>
+<p>Django includes support out of the box for MySQL, PostgreSQL, SQLite3, and Oracle. <a class="reference external" href="https://docs.python.org/2/library/sqlite3.html">SQLite3</a> is included with Python, so we&#8217;ll use it for our project for simplicity. If you were going to use MySQL, for example, you&#8217;d need to add <a class="reference external" href="https://pypi.python.org/pypi/MySQL-python">mysql-python</a> to your <code class="docutils literal"><span class="pre">requirements.txt</span></code> file. We&#8217;ll discuss using databases like MySQL and Postgres in <a href="#id1"><span class="problematic" id="id2">Deploying_</span></a>.</p>
 <p>You can find the database configuration in <code class="docutils literal"><span class="pre">addressbook/settings.py</span></code>. The <code class="docutils literal"><span class="pre">settings.py</span></code> file contains the
 Django configuration for our project. There are some settings that you
 must specify &#8211; like the <code class="docutils literal"><span class="pre">DATABASES</span></code> configuration, for example &#8211; and others
 that are optional. Django fills in some defaults when it generates the
-project scaffolding, and the documentation contains a <a class="reference external" href="https://docs.djangoproject.com/en/1.5/ref/settings/">full list of
+project scaffolding, and the documentation contains a <a class="reference external" href="https://docs.djangoproject.com/en/1.11/ref/settings/">full list of
 settings</a>. You can also add your own settings here, if needed.</p>
 <p>Django defaults to SQLite, so we&#8217;ll just look at the database configuration to make sure we understand it.</p>
 <div class="highlight-python"><div class="highlight"><pre><span></span><span class="n">DATABASES</span> <span class="o">=</span> <span class="p">{</span>
