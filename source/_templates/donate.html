@@ -1,0 +1,8 @@
+{% if theme_gratipay_user or theme_gittip_user %}
+<h3>Donate</h3>
+<p>
+Consider supporting the authors on <a href="https://www.gratipay.com/">Gratipay</a>:
+</p>
+<script data-gratipay-teamslug="{{ theme_gratipay_user or theme_gittip_user }}"
+  src="https://grtp.co/v2.js" async></script>
+{% endif %}
