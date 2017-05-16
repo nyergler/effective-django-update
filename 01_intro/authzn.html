@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -33,7 +33,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">  
+  <body>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -47,12 +47,12 @@
 <p class="last">This page is a work in progress; errors may exist, and additional
 content is forthcoming.</p>
 </div>
-<p>So far we&#8217;ve built a simple contact manager, and added support for a
+<p>So far we’ve built a simple contact manager, and added support for a
 related model (Addresses). This has shown how to use many of the
-basics, but there are a few more things you&#8217;d want before exposing
+basics, but there are a few more things you’d want before exposing
 this to the outside world. One of those is authentication and
 authorization. Django includes support that works for many projects,
-which is what we&#8217;ll use.</p>
+which is what we’ll use.</p>
 <div class="section" id="authentication">
 <h2>Authentication<a class="headerlink" href="#authentication" title="Permalink to this headline">¶</a></h2>
 <p>In order to use the included authentication support, the
@@ -88,17 +88,17 @@ installed, as well.</p>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>If you&#8217;ll recall, during the first run of <code class="docutils literal"><span class="pre">syncdb</span></code>, Django asked if
+<p>If you’ll recall, during the first run of <code class="docutils literal"><span class="pre">syncdb</span></code>, Django asked if
 we wanted to create a superuser account. It did so because we had the
 application installed already.</p>
 <p>The stock Django auth model supports <a class="reference external" href="https://docs.djangoproject.com/en/1.10/topics/auth/default/#user-objects">Users</a>, <a class="reference external" href="https://docs.djangoproject.com/en/1.10/topics/auth/default/#groups">Groups</a>, and
-<a class="reference external" href="https://docs.djangoproject.com/en/1.10/topics/auth/default/#permissions-and-authorization">Permissions</a>. This is usually sufficient unless you&#8217;re integrating
+<a class="reference external" href="https://docs.djangoproject.com/en/1.10/topics/auth/default/#permissions-and-authorization">Permissions</a>. This is usually sufficient unless you’re integrating
 with an existing authentication backend.</p>
 <p><code class="docutils literal"><span class="pre">django.contrib.auth</span></code> provides a set of views to support the basic
 authentication actions such as login, logout, password reset, etc.
-Note that it includes <em>views</em>, but not <em>templates</em>. We&#8217;ll need to
+Note that it includes <em>views</em>, but not <em>templates</em>. We’ll need to
 provide those for our project.</p>
-<p>For this example we&#8217;ll just add support for login and logout views in
+<p>For this example we’ll just add support for login and logout views in
 our project. First, add the views to <code class="docutils literal"><span class="pre">addressbook/urls.py</span></code>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">urlpatterns</span> <span class="o">=</span> <span class="n">patterns</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
     <span class="n">url</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;^login/$&#39;</span><span class="p">,</span> <span class="s1">&#39;django.contrib.auth.views.login&#39;</span><span class="p">),</span>
@@ -108,7 +108,7 @@ our project. First, add the views to <code class="docutils literal"><span class=
 <p>Both the <a class="reference external" href="https://docs.djangoproject.com/en/1.10/topics/auth/default/#django.contrib.auth.views.login">login</a> and <a class="reference external" href="https://docs.djangoproject.com/en/1.10/topics/auth/default/#django.contrib.auth.views.login">logout</a> view have default template names
 (<code class="docutils literal"><span class="pre">registration/login.html</span></code> and <code class="docutils literal"><span class="pre">registration/logged_out.html</span></code>,
 respectively). Because these views are specific to our project and not
-our re-usable Contacts application, we&#8217;ll create a new
+our re-usable Contacts application, we’ll create a new
 <code class="docutils literal"><span class="pre">templates/registration</span></code> directory inside of <code class="docutils literal"><span class="pre">addressbook</span></code>:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ mkdir -p addressbook/templates/registration
 </pre></div>
@@ -177,21 +177,21 @@ logout was successful.</p>
 <p class="last">XXX</p>
 </div>
 <p>If you run your development server now using <code class="docutils literal"><span class="pre">runserver</span></code> and visit
-<code class="docutils literal"><span class="pre">http://localhost:8000/login</span></code>, you&#8217;ll see the login page. If you
+<code class="docutils literal"><span class="pre">http://localhost:8000/login</span></code>, you’ll see the login page. If you
 login with bogus credentials, you should see an error message. So
-let&#8217;s try logging in with the super user credential you created earlier.</p>
+let’s try logging in with the super user credential you created earlier.</p>
 <img alt="../_images/authz-login-pagenotfound.png" src="../_images/authz-login-pagenotfound.png" />
 <p>Wait, what? Why is it visiitng <code class="docutils literal"><span class="pre">/accounts/profile</span></code>? We never typed
 that. The login view wants to redirect the user to a fixed URL after a
 successful login, and the default is <code class="docutils literal"><span class="pre">/accounts/profile</span></code>. To
-override that, we&#8217;ll set the <code class="docutils literal"><span class="pre">LOGIN_REDIRECT_URL</span></code> value in
-<code class="docutils literal"><span class="pre">addressbook/settings.py</span></code> so that once a user logs in they&#8217;ll be
+override that, we’ll set the <code class="docutils literal"><span class="pre">LOGIN_REDIRECT_URL</span></code> value in
+<code class="docutils literal"><span class="pre">addressbook/settings.py</span></code> so that once a user logs in they’ll be
 redirected to the list of contacts.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">LOGIN_REDIRECT_URL</span> <span class="o">=</span> <span class="s1">&#39;/&#39;</span>
 </pre></div>
 </div>
-<p>Now that we can log in and log out, it&#8217;d be nice to show the logged in
-user in the header and links to login/logout in the header. We&#8217;ll add
+<p>Now that we can log in and log out, it’d be nice to show the logged in
+user in the header and links to login/logout in the header. We’ll add
 that to our <code class="docutils literal"><span class="pre">base.html</span></code> template, since we want that to show up
 everywhere.</p>
 <div class="highlight-html"><div class="highlight"><pre><span></span>  <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
@@ -208,9 +208,9 @@ everywhere.</p>
 </div>
 <div class="section" id="authorization">
 <h2>Authorization<a class="headerlink" href="#authorization" title="Permalink to this headline">¶</a></h2>
-<p>Having support for login and logout is nice, but we&#8217;re not actually
+<p>Having support for login and logout is nice, but we’re not actually
 using it right now. So we want to first make our Contact views only
-available to authenticated users, and then we&#8217;ll go on to associated
+available to authenticated users, and then we’ll go on to associated
 contacts with specific Users, so the application could be used for
 multiple users.</p>
 <p>Django includes a suite a functions and decorators that help you guard
@@ -218,13 +218,13 @@ a view based on authentication/authorization. One of the most commonly
 used is <a class="reference external" href="https://docs.djangoproject.com/en/1.10/topics/auth/default/#django.contrib.auth.decorators.login_required">login_required</a>. Unfortunately, applying view decorators to
 class based views remains <a class="reference external" href="https://docs.djangoproject.com/en/1.10/topics/class-based-views/intro/#decorating-class-based-views">a little cumbersome</a>. There are
 essentially two methods: decorating the URL configuration, and
-decorating the class. I&#8217;ll show how to decorate the class.</p>
-<p>Class based views have a <code class="docutils literal"><span class="pre">dispatch()</span></code> method that&#8217;s called when an
+decorating the class. I’ll show how to decorate the class.</p>
+<p>Class based views have a <code class="docutils literal"><span class="pre">dispatch()</span></code> method that’s called when an
 URL pattern matches. The <code class="docutils literal"><span class="pre">dispatch()</span></code> method looks up the
 appropriate method on the class based on the HTTP method and then
 calls it. Because we want to protect the views for all HTTP methods,
-we&#8217;ll override and decorate that.</p>
-<p>In <code class="docutils literal"><span class="pre">contacts/views.py</span></code> we&#8217;ll create a class mixin that ensures the
+we’ll override and decorate that.</p>
+<p>In <code class="docutils literal"><span class="pre">contacts/views.py</span></code> we’ll create a class mixin that ensures the
 user is logged in.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.contrib.auth.decorators</span> <span class="k">import</span> <span class="n">login_required</span>
 <span class="kn">from</span> <span class="nn">django.utils.decorators</span> <span class="k">import</span> <span class="n">method_decorator</span>
@@ -236,7 +236,7 @@ user is logged in.</p>
         <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">LoggedInMixin</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">dispatch</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>This is a <em>mixin</em> because it doesn&#8217;t provide a full implementation of
+<p>This is a <em>mixin</em> because it doesn’t provide a full implementation of
 a view on its own; it needs to be <em>mixed</em> with another view to have an
 effect.</p>
 <p>Once we have it, we can add it to the class declarations in
@@ -254,15 +254,15 @@ look as follows.</p>
 </pre></div>
 </div>
 <p>Just as <code class="docutils literal"><span class="pre">LOGIN_REDIRECT_URL</span></code> tells Django where to send people
-<em>after</em> they log in, there&#8217;s a setting to control where to send them
+<em>after</em> they log in, there’s a setting to control where to send them
 when they <em>need</em> to login. However, this can also be a view name, so
-we don&#8217;t have to bake an explicit URL into the settings.</p>
+we don’t have to bake an explicit URL into the settings.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">LOGIN_URL</span> <span class="o">=</span> <span class="s1">&#39;django.contrib.auth.views.login&#39;</span>
 </pre></div>
 </div>
 <div class="section" id="checking-ownership">
 <h3>Checking Ownership<a class="headerlink" href="#checking-ownership" title="Permalink to this headline">¶</a></h3>
-<p>Checking that you&#8217;re logged in is well and good, but to make this
+<p>Checking that you’re logged in is well and good, but to make this
 suitable for multiple users we need to add the concept of ownership.
 There are three steps for</p>
 <ol class="arabic simple">
@@ -270,7 +270,7 @@ There are three steps for</p>
 <li>Only show Contacts the logged in user owns in the list</li>
 <li>Set the Owner when creating a new one</li>
 </ol>
-<p>First, we&#8217;ll go ahead and add the concept of an Owner to the Contact
+<p>First, we’ll go ahead and add the concept of an Owner to the Contact
 model.</p>
 <p>In <code class="docutils literal"><span class="pre">contacts/models.py</span></code>, we add an import and another field to our
 model.</p>
@@ -302,13 +302,13 @@ model.</p>
         <span class="k">return</span> <span class="n">reverse</span><span class="p">(</span><span class="s1">&#39;contacts-view&#39;</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;pk&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span><span class="p">})</span>
 </pre></div>
 </div>
-<p>Because Django doesn&#8217;t support migrations out of the box, we&#8217;ll need
+<p>Because Django doesn’t support migrations out of the box, we’ll need
 to blow away the database and re-run syncdb.</p>
 <p>XXX Perfect segue for talking about South</p>
 <p>Now we need to limit the contact list to only the contacts the logged
 in User owns. This gets us into overriding methods that the base view
 classes have been handling for us.</p>
-<p>For the list of Contacts, we&#8217;ll want to override the <code class="docutils literal"><span class="pre">get_queryset</span></code>
+<p>For the list of Contacts, we’ll want to override the <code class="docutils literal"><span class="pre">get_queryset</span></code>
 method, which returns the <a class="reference external" href="https://docs.djangoproject.com/en/1.10/ref/class-based-views/mixins-multiple-object/#django.views.generic.list.MultipleObjectMixin.get_queryset">Django QuerySet</a> of objects to be
 displayed.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ListContactView</span><span class="p">(</span><span class="n">LoggedInMixin</span><span class="p">,</span> <span class="n">ListView</span><span class="p">):</span>
@@ -322,7 +322,7 @@ displayed.</p>
 </pre></div>
 </div>
 <p>The remaining views are responsible for showing only a single object
-&#8211; the Contact (or its addresses). For those we&#8217;ll create another
+– the Contact (or its addresses). For those we’ll create another
 mixin that enforces authorization.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.core.exceptions</span> <span class="k">import</span> <span class="n">PermissionDenied</span>
 <span class="o">...</span>
@@ -352,7 +352,7 @@ mixin that enforces authorization.</p>
 </div>
 <p><code class="docutils literal"><span class="pre">ContactOwnerMixin</span></code> overrides the <code class="docutils literal"><span class="pre">get_object()</span></code> method, which is
 responsible for getting the object for a view to operate on. If it
-can&#8217;t find one with the specified primary key and owner, it raises the
+can’t find one with the specified primary key and owner, it raises the
 <code class="docutils literal"><span class="pre">PermissionDenied</span></code> exception.</p>
 <div class="admonition note">
 <p class="first admonition-title">Note</p>
@@ -360,7 +360,7 @@ can&#8217;t find one with the specified primary key and owner, it raises the
 cannot find the a Contact with the requested ID and owner. This
 will mask legitimate 404 (Not Found) errors.</p>
 </div>
-<p>We&#8217;ll use the <code class="docutils literal"><span class="pre">ContactOwnerMixin</span></code> in all of our views. For example,
+<p>We’ll use the <code class="docutils literal"><span class="pre">ContactOwnerMixin</span></code> in all of our views. For example,
 <code class="docutils literal"><span class="pre">ContactView</span></code> will look as follows:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">ContactView</span><span class="p">(</span><span class="n">LoggedInMixin</span><span class="p">,</span> <span class="n">ContactOwnerMixin</span><span class="p">,</span> <span class="n">DetailView</span><span class="p">):</span>
 
@@ -371,7 +371,7 @@ will mask legitimate 404 (Not Found) errors.</p>
 <p>Note that the order of inheritance is important: the superclasses
 (<code class="docutils literal"><span class="pre">LoggedInMixin</span></code>, <code class="docutils literal"><span class="pre">ContactOwnerMixin</span></code>, <code class="docutils literal"><span class="pre">DetailView</span></code>) will be
 checked in the order listed for methods. By placing <code class="docutils literal"><span class="pre">LoggedInMixin</span></code>
-first, you&#8217;re guaranteed that by the time execution reaches
+first, you’re guaranteed that by the time execution reaches
 <code class="docutils literal"><span class="pre">ContactOwnerMixin</span></code> and <code class="docutils literal"><span class="pre">DetailView</span></code>, you have a logged in,
 authenticated user.</p>
 </div>
@@ -405,8 +405,7 @@ authenticated user.</p>
 
 
 
-
-<h3>&nbsp;</h3>
+<h4><a href="../contents.html">Table of Contents</a></h4>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="index.html">Getting Started with Django</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../02_production/index.html">Building for Production</a></li>
@@ -427,7 +426,7 @@ authenticated user.</p>
 <script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../contents.html">Documentation overview</a><ul>
   </ul></li>
 </ul>
 </div>
@@ -445,7 +444,8 @@ Consider supporting the authors on <a href="https://www.gratipay.com/">Gratipay<
 
 
     <div class="footer">
-      &copy;2012-2017, Nathan R. Yergler.
+      
+      &copy; 2012-2017, <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.yergler.net/" property="cc:attributionName" rel="cc:attributionURL">Nathan Yergler</a>; licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0 license</a>.
       
       |
       <a href="../_sources/01_intro/authzn.rst.txt"

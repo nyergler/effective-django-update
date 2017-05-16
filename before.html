@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -33,7 +33,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">  
+  <body>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -46,18 +46,18 @@
 help things get started smoothly, and avoid possible network issues,
 please complete the following beforehand.</p>
 <p>If you have questions, you can email me at <a class="reference external" href="mailto:nathan&#37;&#52;&#48;yergler&#46;net">nathan<span>&#64;</span>yergler<span>&#46;</span>net</a>. If you
-have platform specific issues, I&#8217;ll try and help you figure them out,
+have platform specific issues, I’ll try and help you figure them out,
 and will update this document with any notes.</p>
 <ol class="arabic">
 <li><p class="first">Install Python</p>
-<p>I&#8217;ll be using Python 2.7; you can download it from the official
+<p>I’ll be using Python 2.7; you can download it from the official
 Python website: <a class="reference external" href="http://python.org/download/releases/2.7.5/">http://python.org/download/releases/2.7.5/</a></p>
 <p>The latest release of 2.7 is 2.7.5. If you already have 2.7.x
 installed, that will work fine.</p>
 </li>
 <li><p class="first">Install virtualenv and pip</p>
 <p><code class="docutils literal"><span class="pre">virtualenv</span></code> is a tool for managing your Python environments. It
-includes <code class="docutils literal"><span class="pre">pip</span></code>, a Python package installer, which we&#8217;ll use to
+includes <code class="docutils literal"><span class="pre">pip</span></code>, a Python package installer, which we’ll use to
 retrieve dependencies.</p>
 <p>You can download <a class="reference external" href="https://pypi.python.org/pypi/virtualenv">virtualenv from PyPI</a> at
 <a class="reference external" href="https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.9.1.tar.gz">https://pypi.python.org/packages/source/v/virtualenv/virtualenv-1.9.1.tar.gz</a></p>
@@ -71,13 +71,13 @@ retrieve dependencies.</p>
 </div>
 </li>
 <li><p class="first">Create a working directory for the tutorial, and make it a virtualenv</p>
-<p>You can create this directory anywhere, but this is where we&#8217;ll be
+<p>You can create this directory anywhere, but this is where we’ll be
 working on code during the tutorial.  For example:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ cd Documents
 $ mkdir django-tutorial
 </pre></div>
 </div>
-<p>Once you&#8217;ve created the directory, create a virtualenv there:</p>
+<p>Once you’ve created the directory, create a virtualenv there:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ virtualenv ./django-tutorial
 </pre></div>
 </div>
@@ -97,20 +97,20 @@ $ source bin/activate
 <p>The <a class="reference external" href="http://www.virtualenv.org/en/latest/#activate-script">virtualenv documentation</a> may be useful if you have trouble activating.</p>
 </li>
 <li><p class="first">Install Django</p>
-<p>We&#8217;ll talk about versions of Django during the tutorial, but in
+<p>We’ll talk about versions of Django during the tutorial, but in
 order to avoid network bottlenecks from dozens of people in one
-room downloading the source, it&#8217;s helpful to install it into your
+room downloading the source, it’s helpful to install it into your
 virtualenv beforehand:</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>$ pip install Django
 </pre></div>
 </div>
 <p>This will download Django and install it into the virtualenv. Once
-it&#8217;s installed, you should see a <code class="docutils literal"><span class="pre">django-admin.py</span></code> script in the
+it’s installed, you should see a <code class="docutils literal"><span class="pre">django-admin.py</span></code> script in the
 <code class="docutils literal"><span class="pre">bin</span></code> (Linux, Mac OS X) or <code class="docutils literal"><span class="pre">Scripts</span></code> (Windows) directory.</p>
 </li>
 </ol>
 <p>If you have questions, you can email me at <a class="reference external" href="mailto:nathan&#37;&#52;&#48;yergler&#46;net">nathan<span>&#64;</span>yergler<span>&#46;</span>net</a>. If you
-have platform specific issues, I&#8217;ll try and help you figure them out,
+have platform specific issues, I’ll try and help you figure them out,
 and will update this document with any notes.</p>
 <p>See you at the tutorial!</p>
 <p>Nathan</p>
@@ -137,8 +137,7 @@ and will update this document with any notes.</p>
 
 
 
-
-<h3>&nbsp;</h3>
+<h4><a href="contents.html">Table of Contents</a></h4>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="01_intro/index.html">Getting Started with Django</a></li>
 <li class="toctree-l1"><a class="reference internal" href="02_production/index.html">Building for Production</a></li>
@@ -159,7 +158,7 @@ and will update this document with any notes.</p>
 <script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
-  <li><a href="index.html">Documentation overview</a><ul>
+  <li><a href="contents.html">Documentation overview</a><ul>
   </ul></li>
 </ul>
 </div>
@@ -177,7 +176,8 @@ Consider supporting the authors on <a href="https://www.gratipay.com/">Gratipay<
 
 
     <div class="footer">
-      &copy;2012-2017, Nathan R. Yergler.
+      
+      &copy; 2012-2017, <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.yergler.net/" property="cc:attributionName" rel="cc:attributionURL">Nathan Yergler</a>; licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0 license</a>.
       
       |
       <a href="_sources/before.rst.txt"

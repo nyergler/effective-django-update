@@ -1,6 +1,6 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
@@ -35,7 +35,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
 
   </head>
-  <body role="document">  
+  <body>  
 
     <div class="document">
       <div class="documentwrapper">
@@ -46,10 +46,10 @@
 <h1>Related Models<a class="headerlink" href="#related-models" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="adding-relationships">
 <h2>Adding Relationships<a class="headerlink" href="#adding-relationships" title="Permalink to this headline">¶</a></h2>
-<p>We have a basic email address book at this point, but there&#8217;s other
+<p>We have a basic email address book at this point, but there’s other
 information we might want to track for our contacts. Mailing
 addresses, for example. A single Contact may have multiple addresses
-associated with them, so we&#8217;ll store this in a separate table,
+associated with them, so we’ll store this in a separate table,
 allowing us to have multiple addresses for each Contact.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">Address</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 
@@ -79,7 +79,7 @@ allowing us to have multiple addresses for each Contact.</p>
 other: <code class="docutils literal"><span class="pre">ForeignKey</span></code> for creating one to many relationships,
 <code class="docutils literal"><span class="pre">ManyToManyField</span></code> for relating many to many, and <code class="docutils literal"><span class="pre">OneToOneField</span></code>
 for creating a one to one relationship. You define the relationship in
-one model, but it&#8217;s accessible from the other side, as well.</p>
+one model, but it’s accessible from the other side, as well.</p>
 <p>Sync up the database to create the table, and then start the shell so
 we can explore this.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span>(tutorial)$ python manage.py syncdb
@@ -121,7 +121,7 @@ Contacts and Addresses on the Address model, Django gives us a way to
 access things in the reverse direction. We can also use the double
 underscore notation to filter Addresses or Contacts based on the
 related objects.</p>
-<p>Let&#8217;s go ahead and add address display to our contacts. We&#8217;ll add the
+<p>Let’s go ahead and add address display to our contacts. We’ll add the
 list of all Addresses to the Contact detail view in <code class="docutils literal"><span class="pre">contact.html</span></code>.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="p">{</span><span class="o">%</span> <span class="n">extends</span> <span class="s2">&quot;base.html&quot;</span> <span class="o">%</span><span class="p">}</span>
 
@@ -149,20 +149,20 @@ list of all Addresses to the Contact detail view in <code class="docutils litera
 <p>So how do we go about editing addresses for our contacts? You can
 imagine creating another CreateView like we did for Contacts, but the
 question remains: how do we wire the new Address to our Contact? We
-could conceivably just pass the Contact&#8217;s ID through the the HTML, but
-we&#8217;d still need to validate that it hadn&#8217;t been tampered with when we
+could conceivably just pass the Contact’s ID through the the HTML, but
+we’d still need to validate that it hadn’t been tampered with when we
 go to create the Address.</p>
-<p>To deal with this, we&#8217;ll create a form that understands the
+<p>To deal with this, we’ll create a form that understands the
 relationship between Contacts and Addresses.</p>
-<p>The editing interface we&#8217;re going to build for Addresses is one that
+<p>The editing interface we’re going to build for Addresses is one that
 allows you to edit all the addresses for a Contact at once. To do
-this, we&#8217;ll need to create a <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/forms/formsets/">FormSet</a> that handles all the Addresses
+this, we’ll need to create a <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/forms/formsets/">FormSet</a> that handles all the Addresses
 for a single Contact. A FormSet is an object that manages multiple
 copies of the same Form (or ModelForm) in a single page. The <a class="reference external" href="https://docs.djangoproject.com/en/1.11/topics/forms/modelforms/#inline-formsets">Inline
 FormSet</a> does this for a set of objects (in this case Addresses) that
 share a common related object (in this case the Contact).</p>
 <p>Because formsets are somewhat complex objects, Django provides factory
-functions that create the class for you. We&#8217;ll add a call to the
+functions that create the class for you. We’ll add a call to the
 factory to our <code class="docutils literal"><span class="pre">forms.py</span></code> file.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.forms.models</span> <span class="k">import</span> <span class="n">inlineformset_factory</span>
 
@@ -179,7 +179,7 @@ factory to our <code class="docutils literal"><span class="pre">forms.py</span><
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>When we create the view, we&#8217;ll need to specify that this is the form
+<p>When we create the view, we’ll need to specify that this is the form
 we want to use, instead of having Django create one for us.</p>
 <div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">EditContactAddressView</span><span class="p">(</span><span class="n">UpdateView</span><span class="p">):</span>
 
@@ -193,7 +193,7 @@ we want to use, instead of having Django create one for us.</p>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_object</span><span class="p">()</span><span class="o">.</span><span class="n">get_absolute_url</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>Note that even though we&#8217;re editing Addresses with this view, we still
+<p>Note that even though we’re editing Addresses with this view, we still
 have <code class="docutils literal"><span class="pre">model</span></code> set to <code class="docutils literal"><span class="pre">Contact</span></code>. This is because an inline formset
 takes the parent object as its starting point.</p>
 <p>Once again, this needs to be wired up into the URL configuration.</p>
@@ -229,16 +229,16 @@ takes the parent object as its starting point.</p>
 </pre></div>
 </div>
 <p>There are two new things in this template, both related to the fact
-we&#8217;re using a formset instead of a form. First, there&#8217;s a reference to
+we’re using a formset instead of a form. First, there’s a reference to
 <code class="docutils literal"><span class="pre">form.management_form</span></code>. This is a set of hidden fields that provide
 some accounting information to Django: how many forms did we start
-with, how many empty ones are there, etc. If Django can&#8217;t find this
+with, how many empty ones are there, etc. If Django can’t find this
 information when you POST the form, it will raise an exception.</p>
-<p>Second, we&#8217;re iterating over form instead of just outputting it (<code class="docutils literal"><span class="pre">for</span>
+<p>Second, we’re iterating over form instead of just outputting it (<code class="docutils literal"><span class="pre">for</span>
 <span class="pre">address_form</span> <span class="pre">in</span> <span class="pre">form</span></code>). Again, this is because <code class="docutils literal"><span class="pre">form</span></code> here is a
 formset instead of a single form. When you iterate over a formset,
-you&#8217;re iterating over the individual forms in it. These individual
-forms are just &#8220;normal&#8221; <code class="docutils literal"><span class="pre">ModelForm</span></code> instances for each Address, so
+you’re iterating over the individual forms in it. These individual
+forms are just “normal” <code class="docutils literal"><span class="pre">ModelForm</span></code> instances for each Address, so
 you can apply the same output techniques you would normally use.</p>
 </div>
 </div>
@@ -269,8 +269,7 @@ you can apply the same output techniques you would normally use.</p>
 
 
 
-
-<h3>&nbsp;</h3>
+<h4><a href="../contents.html">Table of Contents</a></h4>
 <ul class="current">
 <li class="toctree-l1 current"><a class="reference internal" href="index.html">Getting Started with Django</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="getting-started.html">Creating a Django Project</a></li>
@@ -304,7 +303,7 @@ you can apply the same output techniques you would normally use.</p>
 <script type="text/javascript">$('#searchbox').show(0);</script><div class="relations">
 <h3>Related Topics</h3>
 <ul>
-  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="../contents.html">Documentation overview</a><ul>
   <li><a href="index.html">Getting Started with Django</a><ul>
       <li>Previous: <a href="forms.html" title="previous chapter">Form Basics</a></li>
       <li>Next: <a href="../02_production/index.html" title="next chapter">Building for Production</a></li>
@@ -326,7 +325,8 @@ Consider supporting the authors on <a href="https://www.gratipay.com/">Gratipay<
 
 
     <div class="footer">
-      &copy;2012-2017, Nathan R. Yergler.
+      
+      &copy; 2012-2017, <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.yergler.net/" property="cc:attributionName" rel="cc:attributionURL">Nathan Yergler</a>; licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0 license</a>.
       
       |
       <a href="../_sources/01_intro/related.rst.txt"
