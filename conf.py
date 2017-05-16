@@ -132,7 +132,6 @@ html_sidebars = {
         'about.html',
         'searchbox.html',
         'donate.html',
-        'license.html',
     ],
     '**': [
         'about.html',
@@ -140,7 +139,6 @@ html_sidebars = {
         'searchbox.html',
         'relations.html',
         'donate.html',
-        'license.html',
     ]
 }
 
