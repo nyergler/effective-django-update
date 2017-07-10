@@ -12,13 +12,17 @@ Setting Up Your Environment
 
 .. tut:checkpoint:: environment
 
-It's important when starting a new project to create a space for it that won't be influenced by anything else you're working on. I often have multiple projects underway that may be using different versions of the same dependencies, which would be incredibly confusing if they weren't isolated from one another.
+It's important when starting a new project to create a space for it that won't be impacted by anything else you're working on. I often have multiple projects underway that may be using different versions of the same dependencies, which would be incredibly confusing if they weren't isolated from one another.
 
-Python uses "virtual environments" (sometimes referred to as ``virtualenvs`` or ``venvs``) to keep things isolated.
+Python uses "virtual environments" (sometimes referred to as ``virtualenvs`` or ``venvs``) to keep installed dependencies isolated. We'll create one for our first project.
 
 .. note::
 
-  We use Python 3.
+  Django supports by Python 2 and Python 3. Python 3 has reached a point in maturity where I believe it's the obvious choice for new projects. It also seems clear that the Python 3 line is the future of Python.
+
+  For these reasons, we'll exclusively use Python 3 for Effective Django.
+
+Python 3 includes virtualenv support in the ``venv`` module.
 
 .. code-block:: console
 
@@ -31,21 +35,24 @@ Python uses "virtual environments" (sometimes referred to as ``virtualenvs`` or 
 The final command (``source ./bin/activate``) activates the newly created virtual environment, as indicated by the changed prompt.
 
 .. note::
+  :class: windows
 
-  if you're using a Windows computer, the ``venv`` module will create a ``Scripts`` directory instead of ``bin``. To activate the virtual environemnt, run ``.\Scripts\activate.bat`` from the command prompt, or ``.\Scripts\activate.ps1`` from PowerShell.
+  If you're using Windows, the ``venv`` module will create a ``Scripts`` directory instead of ``bin``. To activate the virtual environemnt, run ``.\Scripts\activate.bat`` from the command prompt, or ``.\Scripts\activate.ps1`` from PowerShell.
 
   For more information see the `virtualenv on Windows documentation`_.
+
+.. _`virtualenv on Windows documentation`: http://doesnot.exist/virtualenv
 
 Installing Requirements
 -----------------------
 
-Most languages provide some mechanism for specifying a set of dependencies and the versions you depend on. There are a few ways to do this with Python. For most of our examples we'll be using *pip_*. Pip manages installation of Python packages, and can read *requirements files*. `Requirements files`_ specify a list of dependencies, one per line, along with an optional version specification.
+Most languages provide some mechanism for specifying a set of dependencies and the versions you depend on. There are a few ways to do this with Python. For most of our examples we'll be using pip_. **Pip** manages installation of Python packages, and can read *requirements files*. `Requirements files`_ specify a list of dependencies, one per line, along with an optional version specification.
 
 To begin, create a ``requirements.txt`` file in the ``addresses`` directory with a single line in it.
 
 .. tut:literalinclude:: /projects/addressbook/requirements.txt
 
-This single requirement specifies that we depend on Django, specifically any version _like_ `1.11.0`. In other words, we'll get bug fix releases (i.e., 1.11.1, 1.11.2, etc), but not new, potentially incompatible versions (i.e., 1.12.0). Specifying the version is critical: without the version it's impossible to know that what we developed with and tested with is actually what we're running with.
+This single requirement specifies that we depend on Django, specifically any version *like* ``1.11.0``. In other words, we'll get bug fix releases (i.e., 1.11.1, 1.11.2, etc), but not new, potentially incompatible versions (i.e., 1.12.0). Specifying the version is critical: without the version it's impossible to know that what we developed with and tested with is actually what we're running with.
 
 Once we have the requirements file, we can use pip_ to install the dependencies we specified.
 
@@ -54,16 +61,20 @@ Once we have the requirements file, we can use pip_ to install the dependencies 
    (addresses)$ pip install -U -r requirements.txt
    Collecting Django~=1.11.0 (from -r requirements.txt (line 1))
      Downloading Django-1.11-py2.py3-none-any.whl (6.9MB)
-       100% |████████████████████████████████| 6.9MB 185kB/s
+       100% |XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX| 6.9MB 185kB/s
    Collecting pytz (from Django~=1.11.0->-r requirements.txt (line 1))
      Downloading pytz-2017.2-py2.py3-none-any.whl (484kB)
-       100% |████████████████████████████████| 491kB 2.4MB/s
+       100% |XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX| 491kB 2.4MB/s
    Installing collected packages: pytz, Django
    Successfully installed Django-1.11 pytz-2017.2
 
-.. note::
+.. tip::
 
-  If pip complains that it expects a version specifier, you probably need to upgrade pip.
+  If pip fails, reporting that it expects a version specifier, you probably need to upgrade pip. Interestingly, you update pip *using* pip.
+
+  .. code-block:: console
+
+    $ pip install --upgrade pip
 
 Pip will read each line of your requirements file, fetch the dependency, and then fetch any additionally required dependencies. Because we're working in our virtual environment, we don't need to worry about conflicts.
 
@@ -73,11 +84,7 @@ Pip will read each line of your requirements file, fetch the dependency, and the
 Beginning a Django Project
 ==========================
 
-When a building is under construction, scaffolding is often used to
-support the structure before it's complete. The scaffolding can be
-temporary, or it can serve as part of the foundation for the
-building, but regardless it provides some support when you're just
-starting out.
+When a building is under construction, scaffolding is often used to support the structure before it's complete. The scaffolding can be temporary, or it can serve as part of the foundation for the building, but regardless it provides some support when you're just starting out.
 
 Django, like many frameworks, provides scaffolding for your
 development efforts. It does this by making decisions and providing
@@ -106,9 +113,14 @@ in our isolated environment so we can just say ``.``
 
   (addresses)$ django-admin.py startproject addressbook .
 
-.. note:: Windows
+.. note::
+  :class: windows
 
-  ``.\Scripts\django-admin.exe startproject addressbook .``
+  When you install the requirements under Windows, the management scripts are placed in the ``Scripts`` directory. Instead of runnning ``django-admin.py``, developers using Windows will run ``django-admin.exe``.
+
+  ::
+
+    C:\projects\addresses> .\Scripts\django-admin.exe startproject addressbook .
 
 
 Running ``startproject`` creates some new files in our project directory.
@@ -140,17 +152,17 @@ You can follow that link and see Django's "It worked!" page.
 Creating the "App"
 ------------------
 
-There's one more piece of scaffolding we need to create, and that's our "app". This is where the majority of our work will occur. On many projects you'll wind up with more than one "app", either of your own creation or that you pull in from a third party source. You use the project -- specifically settings.py and urls.py -- to stich everything together.
+.. sidebar:: Project & App Organization
+
+   In versions of Django prior to 1.4, apps were created as sub-directories of the project. You could move them around so long as you made sure your ``PYTHONPATH`` was set correctly, but the default made the two seem tightly coupled. By placing them as peers, it's a little more obvious that apps are potentitally reusable; we'll dive into that later.
+
+There's one more piece of scaffolding we need to create, and that's our "app". This is where the majority of our work will occur. On many projects you'll wind up with more than one "app", either of your own creation or that you pull in from a third party source. You use the project -- specifically ``settings.py`` and ``urls.py`` -- to stich everything together.
 
 We'll use the manage.py wrapper to create our app, which we'll name ``contacts``.
 
 .. code-block:: console
 
   (addresses)$ python3 ./manage.py startapp contacts
-
-.. sidebar:: Project & App Organization
-
-   In versions of Django prior to 1.4, apps were created as sub-directories of the project. You could move them around so long as you made sure your ``PYTHONPATH`` was set correctly, but the default made the two seem tightly coupled. By placing them as peers, it's a little more obvious that apps are potentitally reusable; we'll dive into that later.
 
 Our project's management script (``manage.py``) will create a new directory, ``contacts``, with three nearly empty files:
 
@@ -162,4 +174,5 @@ Our project's management script (``manage.py``) will create a new directory, ``c
 Review
 ======
 
-TK
+* Python uses virtualenvs_ to isolate projects, and pip_ to manage dependencies in them
+* Django organizes code into "projects" and "applications": *projects* are a specification configuration of one or more *applications*.

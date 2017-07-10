@@ -16,7 +16,7 @@ Django includes support out of the box for MySQL, PostgreSQL, SQLite3, and Oracl
 
 You can find the database configuration in ``addressbook/settings.py``. The ``settings.py`` file contains the
 Django configuration for our project. There are some settings that you
-must specify -- like the ``DATABASES`` configuration, for example -- and others
+must specify -- the ``DATABASES`` configuration, for example -- and others
 that are optional. Django fills in some defaults when it generates the
 project scaffolding, and the documentation contains a `full list of
 settings`_. You can also add your own settings here, if needed.
@@ -27,7 +27,7 @@ Django defaults to SQLite, so we'll just look at the database configuration to m
    :language: python
    :lines: 77-82
 
-Here we see that the ``default`` database is configured with the SQLite3 engine and will be named ``db.sqlite3`` in the project directory (``BASE_DIR``, defined near the top of ``settings.py``).
+Here we see that the ``default`` database is configured with the SQLite3 engine and will be named ``db.sqlite3`` in the project directory (``BASE_DIR``, defined near the top of ``settings.py``). Django allows you to create applications that connect to multiple databases, which allows you to do things like connect to a read-only replica for more specific queries to avoid negatively impacting overall performance.
 
 Note that the database engine is specified as a string, and not a
 direct reference to the Python object. This is because the settings
@@ -36,11 +36,13 @@ effects. **You should avoid adding imports to the settings file.**
 
 You rarely need to import the settings file directly; Django imports
 it for you, and makes it available as ``django.conf.settings``. You
-typically import your settings from ``django.conf``::
+typically import your settings from ``django.conf``.
+
+.. code-block:: python
 
   from django.conf import settings
 
-By referring to ``django.conf.settings`` your code doesn't need to bake in assumptions about package names, etc: you can write Django _applications_ that can plug into different _projects_ in the future.
+By referring to ``django.conf.settings`` your application code doesn't need to bake in assumptions about package names or projects: you can write Django _applications_ that can plug into different _projects_ in the future without touching the application code.
 
 Creating a Model
 ================
@@ -50,27 +52,8 @@ to encapsulate business logic. All models subclass the base Model_
 class, and contain field definitions. Let's start by creating a simple
 Contact model for our application in ``contacts/models.py``.
 
-.. code-block:: python
-
-  from django.db import models
-
-
-  class Contact(models.Model):
-
-      first_name = models.CharField(
-          max_length=255,
-      )
-      last_name = models.CharField(
-          max_length=255,
-      )
-
-      email = models.EmailField()
-
-      def __str__(self):
-          return ' '.join([
-              self.first_name,
-              self.last_name,
-          ])
+.. tut:literalinclude:: /projects/addressbook/contacts/models.py
+  :language: python
 
 Django provides a set of fields_ that map to data types and different
 validation rules. For example, the ``EmailField`` here maps to the
@@ -224,7 +207,7 @@ Review
 
 .. _QuerySet: https://docs.djangoproject.com/en/1.11/ref/models/querysets/#django.db.models.query.QuerySet
 .. _query: https://docs.djangoproject.com/en/1.11/topics/db/queries/
-.. _SQLite3: https://docs.python.org/2/library/sqlite3.html
+.. _SQLite3: https://docs.python.org/3/library/sqlite3.html
 .. _mysql-python: https://pypi.python.org/pypi/MySQL-python
 .. _`full list of settings`: https://docs.djangoproject.com/en/1.11/ref/settings/
 .. _Model: https://docs.djangoproject.com/en/1.11/ref/models/instances/#django.db.models.Model

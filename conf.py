@@ -102,7 +102,7 @@ html_theme = 'alabaster'
 #
 html_theme_options = {
     'head_font_family': 'Rosario',
-    'code_font_family': 'Inconsolata',
+    'code_font_family': 'Inconsolata,monospace',
     'github_user': 'nyergler',
     'github_repo': 'effective-django',
     'github_button': False,
